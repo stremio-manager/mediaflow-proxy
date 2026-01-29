@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" class="h-full">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,99 +26,119 @@
     </script>
     <style>
         @import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap');
-        
+
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
-        
+
         @keyframes slideUp {
-            from { transform: translateY(10px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(10px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
-        
+
         .tab-active {
             background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
             color: white;
             box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
         }
-        
+
         .input-field {
             transition: all 0.2s ease;
         }
-        
+
         .input-field:focus {
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
         }
-        
+
         .url-output {
             background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
             font-family: 'JetBrains Mono', monospace;
         }
-        
+
         .copy-btn {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             transition: all 0.2s ease;
         }
-        
+
         .copy-btn:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
         }
-        
+
         .generate-btn {
             background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
             transition: all 0.2s ease;
         }
-        
+
         .generate-btn:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 15px rgba(99, 102, 241, 0.5);
         }
-        
+
         .checkbox-custom {
             accent-color: #8b5cf6;
         }
-        
+
         select option {
             background-color: #1f2937;
             color: white;
         }
-        
+
         .collapsible-header {
             cursor: pointer;
             user-select: none;
         }
-        
+
         .collapsible-content {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease-out;
         }
-        
+
         .collapsible-content.open {
             max-height: 2000px;
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-slate-50 via-gray-100 to-slate-200 dark:from-slate-900 dark:via-gray-900 dark:to-slate-800 min-h-full font-display">
+
+<body
+    class="bg-gradient-to-br from-slate-50 via-gray-100 to-slate-200 dark:from-slate-900 dark:via-gray-900 dark:to-slate-800 min-h-full font-display">
     <!-- Theme Toggle -->
     <div class="fixed top-4 right-4 z-50">
-        <button id="themeToggle" class="p-2.5 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 shadow-lg">
-            <svg id="sunIcon" class="w-5 h-5 text-amber-500 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+        <button id="themeToggle"
+            class="p-2.5 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 shadow-lg">
+            <svg id="sunIcon" class="w-5 h-5 text-amber-500 hidden dark:block" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
-            <svg id="moonIcon" class="w-5 h-5 text-indigo-600 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            <svg id="moonIcon" class="w-5 h-5 text-indigo-600 block dark:hidden" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
             </svg>
         </button>
     </div>
 
     <!-- Back to Home -->
     <div class="fixed top-4 left-4 z-50">
-        <a href="/" class="flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 shadow-lg text-gray-700 dark:text-gray-200 text-sm font-medium">
+        <a href="/"
+            class="flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 shadow-lg text-gray-700 dark:text-gray-200 text-sm font-medium">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
             Home
         </a>
@@ -128,7 +149,8 @@
         <div class="text-center mb-10 animate-fade-in">
             <div class="flex items-center justify-center gap-3 mb-3">
                 <img src="/logo.png" alt="MediaFlow" class="w-12 h-12 rounded-xl shadow-lg">
-                <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">
+                <h1
+                    class="text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">
                     URL Generator
                 </h1>
             </div>
@@ -139,10 +161,12 @@
 
         <!-- API Password (Global) -->
         <div class="mb-6 animate-slide-up">
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-5 border border-gray-200 dark:border-gray-700">
+            <div
+                class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-5 border border-gray-200 dark:border-gray-700">
                 <div class="flex items-center gap-3 mb-3">
                     <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
                     <label class="text-sm font-semibold text-gray-700 dark:text-gray-200">API Password</label>
                     <span class="text-xs text-gray-500 dark:text-gray-400">(optional - for protected instances)</span>
@@ -154,28 +178,35 @@
 
         <!-- Tab Navigation -->
         <div class="flex flex-wrap gap-2 mb-6 animate-slide-up" style="animation-delay: 0.1s;">
-            <button onclick="switchTab('proxy')" id="tab-proxy" class="tab-btn tab-active px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-200">
+            <button onclick="switchTab('proxy')" id="tab-proxy"
+                class="tab-btn tab-active px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-200">
                 🔗 Proxy URLs
             </button>
-            <button onclick="switchTab('extractor')" id="tab-extractor" class="tab-btn px-6 py-3 rounded-xl font-semibold text-sm bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 shadow-md">
+            <button onclick="switchTab('extractor')" id="tab-extractor"
+                class="tab-btn px-6 py-3 rounded-xl font-semibold text-sm bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 shadow-md">
                 🎬 Extractor
             </button>
-            <button onclick="switchTab('encoded')" id="tab-encoded" class="tab-btn px-6 py-3 rounded-xl font-semibold text-sm bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 shadow-md">
+            <button onclick="switchTab('encoded')" id="tab-encoded"
+                class="tab-btn px-6 py-3 rounded-xl font-semibold text-sm bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 shadow-md">
                 🔐 Encoded URL
             </button>
-            <button onclick="switchTab('xc')" id="tab-xc" class="tab-btn px-6 py-3 rounded-xl font-semibold text-sm bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 shadow-md">
+            <button onclick="switchTab('xc')" id="tab-xc"
+                class="tab-btn px-6 py-3 rounded-xl font-semibold text-sm bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 shadow-md">
                 📺 XC Proxy
             </button>
-            <button onclick="switchTab('acestream')" id="tab-acestream" class="tab-btn px-6 py-3 rounded-xl font-semibold text-sm bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 shadow-md">
+            <button onclick="switchTab('acestream')" id="tab-acestream"
+                class="tab-btn px-6 py-3 rounded-xl font-semibold text-sm bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 shadow-md">
                 🌐 Acestream
             </button>
         </div>
 
         <!-- Proxy URL Generator Tab -->
         <div id="panel-proxy" class="tab-panel animate-fade-in">
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div
+                class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
                 <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-sm">🔗</span>
+                    <span
+                        class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-sm">🔗</span>
                     Proxy URL Generator
                 </h2>
 
@@ -183,13 +214,16 @@
                 <div class="mb-6">
                     <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Proxy Type</label>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <button onclick="selectProxyType('hls')" id="proxy-type-hls" class="proxy-type-btn active-proxy-type px-4 py-3 rounded-xl border-2 border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-medium text-sm transition-all">
+                        <button onclick="selectProxyType('hls')" id="proxy-type-hls"
+                            class="proxy-type-btn active-proxy-type px-4 py-3 rounded-xl border-2 border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-medium text-sm transition-all">
                             📺 HLS Manifest
                         </button>
-                        <button onclick="selectProxyType('mpd')" id="proxy-type-mpd" class="proxy-type-btn px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 font-medium text-sm transition-all hover:border-indigo-300">
+                        <button onclick="selectProxyType('mpd')" id="proxy-type-mpd"
+                            class="proxy-type-btn px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 font-medium text-sm transition-all hover:border-indigo-300">
                             🎥 MPD/DASH
                         </button>
-                        <button onclick="selectProxyType('stream')" id="proxy-type-stream" class="proxy-type-btn px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 font-medium text-sm transition-all hover:border-indigo-300">
+                        <button onclick="selectProxyType('stream')" id="proxy-type-stream"
+                            class="proxy-type-btn px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 font-medium text-sm transition-all hover:border-indigo-300">
                             📡 Stream
                         </button>
                     </div>
@@ -198,19 +232,23 @@
                 <!-- HLS Form -->
                 <div id="form-hls" class="proxy-form space-y-4">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Destination URL <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Destination URL
+                            <span class="text-red-500">*</span></label>
                         <input type="url" id="hls-destination" placeholder="https://example.com/playlist.m3u8"
                             class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Key URL <span class="text-gray-400 font-normal">(optional)</span></label>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Key URL <span
+                                class="text-gray-400 font-normal">(optional)</span></label>
                         <input type="url" id="hls-key-url" placeholder="https://example.com/key"
                             class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500">
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Replace the original key URL (useful for bypassing protection)</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Replace the original key URL (useful
+                            for bypassing protection)</p>
                     </div>
-                    
+
                     <!-- HLS Options -->
-                    <div class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                    <div
+                        class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
                         <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Options</h4>
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                             <label class="flex items-center gap-2 cursor-pointer">
@@ -230,11 +268,13 @@
                                 <span class="text-sm text-gray-700 dark:text-gray-300">Max Resolution</span>
                             </label>
                         </div>
-                        
+
                         <!-- Resolution Selection -->
                         <div class="mt-4">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Resolution <span class="text-gray-400 font-normal">(optional)</span></label>
-                            <select id="hls-resolution" class="input-field w-full sm:w-48 px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 text-sm">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Resolution
+                                <span class="text-gray-400 font-normal">(optional)</span></label>
+                            <select id="hls-resolution"
+                                class="input-field w-full sm:w-48 px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 text-sm">
                                 <option value="">Auto (no preference)</option>
                                 <option value="2160p">2160p (4K)</option>
                                 <option value="1440p">1440p (2K)</option>
@@ -244,49 +284,68 @@
                                 <option value="360p">360p</option>
                                 <option value="240p">240p</option>
                             </select>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Select specific resolution (falls back to closest lower if not available)</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Select specific resolution (falls
+                                back to closest lower if not available)</p>
                         </div>
-                        
+
                         <div class="mt-3 text-xs text-gray-500 dark:text-gray-400 space-y-1">
-                            <p><strong>Force Playlist Proxy:</strong> Force all playlist URLs to be proxied regardless of content routing settings</p>
+                            <p><strong>Force Playlist Proxy:</strong> Force all playlist URLs to be proxied regardless
+                                of content routing settings</p>
                             <p><strong>Key Only Proxy:</strong> Only proxy the key URL, leaving segment URLs direct</p>
                             <p><strong>No Proxy:</strong> Returns manifest without proxying internal URLs</p>
                             <p><strong>Max Resolution:</strong> Redirects to the highest resolution stream</p>
                         </div>
                     </div>
-                    
+
                     <!-- Skip Segments Section -->
-                    <div class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
-                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Skip Segments <span class="text-gray-400 font-normal">(Intro/Outro Skip)</span></h4>
+                    <div
+                        class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Skip Segments <span
+                                class="text-gray-400 font-normal">(Intro/Outro Skip)</span></h4>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Time Ranges to Skip</label>
-                            <input type="text" id="hls-skip-segments" placeholder="0-90,1750-1800 (start-end in seconds, comma-separated)"
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Time Ranges
+                                to Skip</label>
+                            <input type="text" id="hls-skip-segments"
+                                placeholder="0-90,1750-1800 (start-end in seconds, comma-separated)"
                                 class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 text-sm">
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Format: start-end,start-end (e.g., "0-90" skips first 90 seconds, "0-112,1750-1800" skips intro and outro). Supports decimal values.</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Format: start-end,start-end (e.g.,
+                                "0-90" skips first 90 seconds, "0-112,1750-1800" skips intro and outro). Supports
+                                decimal values.</p>
                         </div>
                     </div>
-                    
+
                     <!-- Start Offset Section (Live Streams) -->
-                    <div class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
-                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Start Offset <span class="text-gray-400 font-normal">(Live Stream Prebuffer)</span></h4>
+                    <div
+                        class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Start Offset <span
+                                class="text-gray-400 font-normal">(Live Stream Prebuffer)</span></h4>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Time Offset (seconds)</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Time Offset
+                                (seconds)</label>
                             <input type="number" id="hls-start-offset" placeholder="-18" step="0.1"
                                 class="input-field w-full sm:w-48 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 text-sm">
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Use negative values to start behind the live edge (e.g., -18 to start 18 seconds behind). This enables the prebuffer to work on live streams by creating headroom for prefetching segments.</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Use negative values to start behind
+                                the live edge (e.g., -18 to start 18 seconds behind). This enables the prebuffer to work
+                                on live streams by creating headroom for prefetching segments.</p>
                         </div>
                     </div>
-                    
+
                     <!-- HLS Response Headers Section -->
-                    <div class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
-                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Response Headers <span class="text-gray-400 font-normal">(Advanced)</span></h4>
+                    <div
+                        class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Response Headers <span
+                                class="text-gray-400 font-normal">(Advanced)</span></h4>
                         <div class="space-y-4">
                             <div>
                                 <div class="flex items-center justify-between mb-2">
-                                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Add Response Headers <span class="text-gray-400 font-normal">(r_ prefix - manifest only)</span></label>
-                                    <button onclick="addHlsResponseHeader()" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium flex items-center gap-1">
+                                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Add Response
+                                        Headers <span class="text-gray-400 font-normal">(r_ prefix - manifest
+                                            only)</span></label>
+                                    <button onclick="addHlsResponseHeader()"
+                                        class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium flex items-center gap-1">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 4v16m8-8H4" />
                                         </svg>
                                         Add
                                     </button>
@@ -295,13 +354,17 @@
                                     <!-- Response headers will be added here dynamically -->
                                 </div>
                             </div>
-                            
+
                             <div>
                                 <div class="flex items-center justify-between mb-2">
-                                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Propagate Headers to Segments <span class="text-gray-400 font-normal">(rp_ prefix)</span></label>
-                                    <button onclick="addHlsPropagateHeader()" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium flex items-center gap-1">
+                                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Propagate
+                                        Headers to Segments <span class="text-gray-400 font-normal">(rp_
+                                            prefix)</span></label>
+                                    <button onclick="addHlsPropagateHeader()"
+                                        class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium flex items-center gap-1">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 4v16m8-8H4" />
                                         </svg>
                                         Add
                                     </button>
@@ -309,14 +372,17 @@
                                 <div id="hls-propagate-headers-container" class="space-y-2">
                                     <!-- Propagate headers will be added here dynamically -->
                                 </div>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Headers that propagate to segment URLs (e.g., content-type for disguised segments)</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Headers that propagate to
+                                    segment URLs (e.g., content-type for disguised segments)</p>
                             </div>
-                            
+
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Remove Response Headers <span class="text-gray-400 font-normal">(x_headers)</span></label>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Remove
+                                    Response Headers <span class="text-gray-400 font-normal">(x_headers)</span></label>
                                 <input type="text" id="hls-remove-headers" placeholder="content-length, content-range"
                                     class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 text-sm">
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Comma-separated list of response headers to remove</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Comma-separated list of
+                                    response headers to remove</p>
                             </div>
                         </div>
                     </div>
@@ -325,33 +391,41 @@
                 <!-- MPD Form -->
                 <div id="form-mpd" class="proxy-form space-y-4 hidden">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Destination URL <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Destination URL
+                            <span class="text-red-500">*</span></label>
                         <input type="url" id="mpd-destination" placeholder="https://example.com/manifest.mpd"
                             class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500">
                     </div>
-                    
+
                     <!-- DRM Section -->
-                    <div class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
-                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">DRM Parameters (Clear Key)</h4>
+                    <div
+                        class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">DRM Parameters (Clear
+                            Key)</h4>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Key ID</label>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Key
+                                    ID</label>
                                 <input type="text" id="mpd-key-id" placeholder="eb676abbcb345e96bbcf616630f1a3da"
                                     class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 font-mono text-sm">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Key</label>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Key</label>
                                 <input type="text" id="mpd-key" placeholder="100b6c20940f779a4589152b57d2dacb"
                                     class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 font-mono text-sm">
                             </div>
                         </div>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">For Clear Key DRM-protected streams. Leave empty for non-DRM content.</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">For Clear Key DRM-protected streams.
+                            Leave empty for non-DRM content.</p>
                     </div>
-                    
+
                     <!-- Resolution Selection -->
-                    <div class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                    <div
+                        class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
                         <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Resolution</h4>
-                        <select id="mpd-resolution" class="input-field w-full sm:w-48 px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 text-sm">
+                        <select id="mpd-resolution"
+                            class="input-field w-full sm:w-48 px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 text-sm">
                             <option value="">Auto (no preference)</option>
                             <option value="2160p">2160p (4K)</option>
                             <option value="1440p">1440p (2K)</option>
@@ -361,41 +435,58 @@
                             <option value="360p">360p</option>
                             <option value="240p">240p</option>
                         </select>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Select specific resolution (falls back to closest lower if not available)</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Select specific resolution (falls back
+                            to closest lower if not available)</p>
                     </div>
-                    
+
                     <!-- Skip Segments Section -->
-                    <div class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
-                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Skip Segments <span class="text-gray-400 font-normal">(Intro/Outro Skip)</span></h4>
+                    <div
+                        class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Skip Segments <span
+                                class="text-gray-400 font-normal">(Intro/Outro Skip)</span></h4>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Time Ranges to Skip</label>
-                            <input type="text" id="mpd-skip-segments" placeholder="0-90,1750-1800 (start-end in seconds, comma-separated)"
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Time Ranges
+                                to Skip</label>
+                            <input type="text" id="mpd-skip-segments"
+                                placeholder="0-90,1750-1800 (start-end in seconds, comma-separated)"
                                 class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 text-sm">
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Format: start-end,start-end (e.g., "0-90" skips first 90 seconds, "0-112,1750-1800" skips intro and outro). Supports decimal values.</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Format: start-end,start-end (e.g.,
+                                "0-90" skips first 90 seconds, "0-112,1750-1800" skips intro and outro). Supports
+                                decimal values.</p>
                         </div>
                     </div>
-                    
+
                     <!-- Start Offset Section (Live Streams) -->
-                    <div class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
-                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Start Offset <span class="text-gray-400 font-normal">(Live Stream Prebuffer)</span></h4>
+                    <div
+                        class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Start Offset <span
+                                class="text-gray-400 font-normal">(Live Stream Prebuffer)</span></h4>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Time Offset (seconds)</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Time Offset
+                                (seconds)</label>
                             <input type="number" id="mpd-start-offset" placeholder="-18" step="0.1"
                                 class="input-field w-full sm:w-48 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 text-sm">
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Use negative values to start behind the live edge (e.g., -18 to start 18 seconds behind). This enables the prebuffer to work on live streams by creating headroom for prefetching segments.</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Use negative values to start behind
+                                the live edge (e.g., -18 to start 18 seconds behind). This enables the prebuffer to work
+                                on live streams by creating headroom for prefetching segments.</p>
                         </div>
                     </div>
-                    
+
                     <!-- MPD Response Headers Section -->
-                    <div class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
-                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Response Headers <span class="text-gray-400 font-normal">(Advanced)</span></h4>
+                    <div
+                        class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Response Headers <span
+                                class="text-gray-400 font-normal">(Advanced)</span></h4>
                         <div class="space-y-4">
                             <div>
                                 <div class="flex items-center justify-between mb-2">
-                                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Add Response Headers <span class="text-gray-400 font-normal">(r_ prefix)</span></label>
-                                    <button onclick="addMpdResponseHeader()" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium flex items-center gap-1">
+                                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Add Response
+                                        Headers <span class="text-gray-400 font-normal">(r_ prefix)</span></label>
+                                    <button onclick="addMpdResponseHeader()"
+                                        class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium flex items-center gap-1">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 4v16m8-8H4" />
                                         </svg>
                                         Add
                                     </button>
@@ -404,12 +495,15 @@
                                     <!-- Response headers will be added here dynamically -->
                                 </div>
                             </div>
-                            
+
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Remove Response Headers <span class="text-gray-400 font-normal">(x_headers)</span></label>
-                                <input type="text" id="mpd-remove-headers" placeholder="X-Frame-Options, Content-Security-Policy"
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Remove
+                                    Response Headers <span class="text-gray-400 font-normal">(x_headers)</span></label>
+                                <input type="text" id="mpd-remove-headers"
+                                    placeholder="X-Frame-Options, Content-Security-Policy"
                                     class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 text-sm">
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Comma-separated list of response headers to remove</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Comma-separated list of
+                                    response headers to remove</p>
                             </div>
                         </div>
                     </div>
@@ -418,27 +512,34 @@
                 <!-- Stream Form -->
                 <div id="form-stream" class="proxy-form space-y-4 hidden">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Destination URL <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Destination URL
+                            <span class="text-red-500">*</span></label>
                         <input type="url" id="stream-destination" placeholder="https://example.com/video.mp4"
                             class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Filename <span class="text-gray-400 font-normal">(optional)</span></label>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Filename <span
+                                class="text-gray-400 font-normal">(optional)</span></label>
                         <input type="text" id="stream-filename" placeholder="movie.mp4"
                             class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500">
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Filename for Content-Disposition header (useful for media players like Infuse)</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Filename for Content-Disposition header
+                            (useful for media players like Infuse)</p>
                     </div>
-                    
+
                     <!-- Response Headers Section -->
-                    <div class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                    <div
+                        class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
                         <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Response Headers</h4>
                         <div class="space-y-4">
                             <div>
                                 <div class="flex items-center justify-between mb-2">
-                                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Add Response Headers <span class="text-gray-400 font-normal">(r_ prefix)</span></label>
-                                    <button onclick="addStreamResponseHeader()" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium flex items-center gap-1">
+                                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Add Response
+                                        Headers <span class="text-gray-400 font-normal">(r_ prefix)</span></label>
+                                    <button onclick="addStreamResponseHeader()"
+                                        class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium flex items-center gap-1">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 4v16m8-8H4" />
                                         </svg>
                                         Add
                                     </button>
@@ -446,14 +547,18 @@
                                 <div id="stream-response-headers-container" class="space-y-2">
                                     <!-- Response headers will be added here dynamically -->
                                 </div>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Headers to add to the proxied response (e.g., Cache-Control, Content-Type)</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Headers to add to the proxied
+                                    response (e.g., Cache-Control, Content-Type)</p>
                             </div>
-                            
+
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Remove Response Headers <span class="text-gray-400 font-normal">(x_headers)</span></label>
-                                <input type="text" id="stream-remove-headers" placeholder="X-Frame-Options, Content-Security-Policy"
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Remove
+                                    Response Headers <span class="text-gray-400 font-normal">(x_headers)</span></label>
+                                <input type="text" id="stream-remove-headers"
+                                    placeholder="X-Frame-Options, Content-Security-Policy"
                                     class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 text-sm">
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Comma-separated list of response headers to remove from the proxied response</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Comma-separated list of
+                                    response headers to remove from the proxied response</p>
                             </div>
                         </div>
                     </div>
@@ -462,10 +567,13 @@
                 <!-- Request Headers Section -->
                 <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                     <div class="flex items-center justify-between mb-4">
-                        <label class="text-sm font-semibold text-gray-700 dark:text-gray-200">Request Headers <span class="text-gray-400 font-normal">(optional)</span></label>
-                        <button onclick="addProxyHeader()" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium flex items-center gap-1">
+                        <label class="text-sm font-semibold text-gray-700 dark:text-gray-200">Request Headers <span
+                                class="text-gray-400 font-normal">(optional)</span></label>
+                        <button onclick="addProxyHeader()"
+                            class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium flex items-center gap-1">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4" />
                             </svg>
                             Add Header
                         </button>
@@ -473,23 +581,27 @@
                     <div id="proxy-headers-container" class="space-y-2">
                         <!-- Headers will be added here dynamically -->
                     </div>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Headers will be encoded as h_HeaderName=value in the URL</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Headers will be encoded as
+                        h_HeaderName=value in the URL</p>
                 </div>
 
                 <!-- Generate Button -->
                 <div class="mt-6">
-                    <button onclick="generateProxyUrl()" class="generate-btn w-full py-3.5 rounded-xl text-white font-semibold text-sm">
+                    <button onclick="generateProxyUrl()"
+                        class="generate-btn w-full py-3.5 rounded-xl text-white font-semibold text-sm">
                         Generate Proxy URL
                     </button>
                 </div>
 
                 <!-- Output -->
                 <div id="proxy-output" class="mt-6 hidden">
-                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Generated URL</label>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Generated
+                        URL</label>
                     <div class="url-output rounded-xl p-4 text-green-400 text-sm break-all overflow-x-auto">
                         <code id="proxy-generated-url"></code>
                     </div>
-                    <button onclick="copyUrl('proxy-generated-url', event)" class="copy-btn mt-3 px-6 py-2.5 rounded-xl text-white font-semibold text-sm">
+                    <button onclick="copyUrl('proxy-generated-url', event)"
+                        class="copy-btn mt-3 px-6 py-2.5 rounded-xl text-white font-semibold text-sm">
                         📋 Copy to Clipboard
                     </button>
                 </div>
@@ -498,16 +610,20 @@
 
         <!-- Extractor Tab -->
         <div id="panel-extractor" class="tab-panel hidden animate-fade-in">
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div
+                class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
                 <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center text-white text-sm">🎬</span>
+                    <span
+                        class="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center text-white text-sm">🎬</span>
                     Extractor URL Generator
                 </h2>
 
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Video Host <span class="text-red-500">*</span></label>
-                        <select id="extractor-host" class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500">
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Video Host
+                            <span class="text-red-500">*</span></label>
+                        <select id="extractor-host"
+                            class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500">
                             <option value="">Select a host...</option>
                             <option value="Doodstream">Doodstream</option>
                             <option value="FileLions">FileLions</option>
@@ -534,13 +650,15 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Video URL <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Video URL <span
+                                class="text-red-500">*</span></label>
                         <input type="url" id="extractor-destination" placeholder="https://doodstream.com/e/xxxxx"
                             class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500">
                     </div>
 
                     <!-- Extractor Options -->
-                    <div class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                    <div
+                        class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
                         <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Options</h4>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <label class="flex items-center gap-2 cursor-pointer">
@@ -557,30 +675,38 @@
                             </label>
                         </div>
                         <div class="mt-3 text-xs text-gray-500 dark:text-gray-400 space-y-1">
-                            <p><strong>Redirect to Stream:</strong> Automatically redirect to the stream endpoint after extraction</p>
+                            <p><strong>Redirect to Stream:</strong> Automatically redirect to the stream endpoint after
+                                extraction</p>
                             <p><strong>Max Resolution:</strong> Select the highest resolution available</p>
                             <p><strong>No Proxy:</strong> Return direct URLs without proxying</p>
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Extra Parameters <span class="text-gray-400 font-normal">(JSON, optional)</span></label>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Extra
+                            Parameters <span class="text-gray-400 font-normal">(JSON, optional)</span></label>
                         <textarea id="extractor-extra-params" rows="3" placeholder='{"stream_title": "My Stream"}'
                             class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 font-mono text-sm"></textarea>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Additional parameters for specific extractors (e.g., stream_title for LiveTV)</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Additional parameters for specific
+                            extractors (e.g., stream_title for LiveTV)</p>
                     </div>
-                    
+
                     <!-- Extractor Headers Section -->
-                    <div class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
-                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Headers <span class="text-gray-400 font-normal">(Advanced)</span></h4>
+                    <div
+                        class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Headers <span
+                                class="text-gray-400 font-normal">(Advanced)</span></h4>
                         <div class="space-y-4">
                             <!-- Request Headers -->
                             <div>
                                 <div class="flex items-center justify-between mb-2">
-                                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Request Headers <span class="text-gray-400 font-normal">(h_ prefix)</span></label>
-                                    <button onclick="addExtractorRequestHeader()" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium flex items-center gap-1">
+                                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Request Headers
+                                        <span class="text-gray-400 font-normal">(h_ prefix)</span></label>
+                                    <button onclick="addExtractorRequestHeader()"
+                                        class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium flex items-center gap-1">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 4v16m8-8H4" />
                                         </svg>
                                         Add
                                     </button>
@@ -588,16 +714,20 @@
                                 <div id="extractor-request-headers-container" class="space-y-2">
                                     <!-- Request headers will be added here dynamically -->
                                 </div>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Headers sent when extracting the stream (e.g., Referer, User-Agent)</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Headers sent when extracting
+                                    the stream (e.g., Referer, User-Agent)</p>
                             </div>
-                            
+
                             <!-- Response Headers -->
                             <div>
                                 <div class="flex items-center justify-between mb-2">
-                                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Response Headers <span class="text-gray-400 font-normal">(r_ prefix)</span></label>
-                                    <button onclick="addExtractorResponseHeader()" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium flex items-center gap-1">
+                                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Response Headers
+                                        <span class="text-gray-400 font-normal">(r_ prefix)</span></label>
+                                    <button onclick="addExtractorResponseHeader()"
+                                        class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium flex items-center gap-1">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 4v16m8-8H4" />
                                         </svg>
                                         Add
                                     </button>
@@ -605,15 +735,19 @@
                                 <div id="extractor-response-headers-container" class="space-y-2">
                                     <!-- Response headers will be added here dynamically -->
                                 </div>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Headers to add to the proxied response (used with redirect_stream)</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Headers to add to the proxied
+                                    response (used with redirect_stream)</p>
                             </div>
-                            
+
                             <!-- Remove Headers -->
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Remove Response Headers <span class="text-gray-400 font-normal">(x_headers)</span></label>
-                                <input type="text" id="extractor-remove-headers" placeholder="X-Frame-Options, Content-Security-Policy"
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Remove
+                                    Response Headers <span class="text-gray-400 font-normal">(x_headers)</span></label>
+                                <input type="text" id="extractor-remove-headers"
+                                    placeholder="X-Frame-Options, Content-Security-Policy"
                                     class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 text-sm">
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Comma-separated list of response headers to remove</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Comma-separated list of
+                                    response headers to remove</p>
                             </div>
                         </div>
                     </div>
@@ -621,18 +755,21 @@
 
                 <!-- Generate Button -->
                 <div class="mt-6">
-                    <button onclick="generateExtractorUrl()" class="generate-btn w-full py-3.5 rounded-xl text-white font-semibold text-sm">
+                    <button onclick="generateExtractorUrl()"
+                        class="generate-btn w-full py-3.5 rounded-xl text-white font-semibold text-sm">
                         Generate Extractor URL
                     </button>
                 </div>
 
                 <!-- Output -->
                 <div id="extractor-output" class="mt-6 hidden">
-                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Generated URL</label>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Generated
+                        URL</label>
                     <div class="url-output rounded-xl p-4 text-green-400 text-sm break-all overflow-x-auto">
                         <code id="extractor-generated-url"></code>
                     </div>
-                    <button onclick="copyUrl('extractor-generated-url', event)" class="copy-btn mt-3 px-6 py-2.5 rounded-xl text-white font-semibold text-sm">
+                    <button onclick="copyUrl('extractor-generated-url', event)"
+                        class="copy-btn mt-3 px-6 py-2.5 rounded-xl text-white font-semibold text-sm">
                         📋 Copy to Clipboard
                     </button>
                 </div>
@@ -641,27 +778,35 @@
 
         <!-- Encoded URL Tab -->
         <div id="panel-encoded" class="tab-panel hidden animate-fade-in">
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div
+                class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
                 <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-sm">🔐</span>
+                    <span
+                        class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-sm">🔐</span>
                     Encoded URL Generator
                 </h2>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">Generate encrypted/encoded URLs with expiration, IP restriction, and custom headers using the server-side API.</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">Generate encrypted/encoded URLs with
+                    expiration, IP restriction, and custom headers using the server-side API.</p>
 
                 <div class="space-y-4">
                     <!-- Basic Settings -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">MediaFlow Proxy URL <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">MediaFlow
+                                Proxy URL <span class="text-red-500">*</span></label>
                             <input type="url" id="encoded-proxy-url" placeholder="https://your-mediaflow-server.com"
                                 class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500">
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Endpoint <span class="text-red-500">*</span></label>
-                            <select id="encoded-endpoint" class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500">
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Endpoint
+                                <span class="text-red-500">*</span></label>
+                            <select id="encoded-endpoint"
+                                class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500">
                                 <option value="">Select an endpoint...</option>
-                                <option value="/proxy/hls/manifest.m3u8">HLS Manifest (/proxy/hls/manifest.m3u8)</option>
-                                <option value="/proxy/mpd/manifest.m3u8">MPD Manifest (/proxy/mpd/manifest.m3u8)</option>
+                                <option value="/proxy/hls/manifest.m3u8">HLS Manifest (/proxy/hls/manifest.m3u8)
+                                </option>
+                                <option value="/proxy/mpd/manifest.m3u8">MPD Manifest (/proxy/mpd/manifest.m3u8)
+                                </option>
                                 <option value="/proxy/stream">Stream (/proxy/stream)</option>
                                 <option value="/extractor/video">Extractor (/extractor/video)</option>
                             </select>
@@ -669,67 +814,90 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Destination URL <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Destination URL
+                            <span class="text-red-500">*</span></label>
                         <input type="url" id="encoded-destination" placeholder="https://example.com/stream.m3u8"
                             class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500">
                     </div>
 
                     <!-- Query Parameters -->
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Query Parameters <span class="text-gray-400 font-normal">(JSON, optional)</span></label>
-                        <textarea id="encoded-query-params" rows="2" placeholder='{"key_id": "xxx", "key": "yyy", "host": "Doodstream"}'
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Query
+                            Parameters <span class="text-gray-400 font-normal">(JSON, optional)</span></label>
+                        <textarea id="encoded-query-params" rows="2"
+                            placeholder='{"key_id": "xxx", "key": "yyy", "host": "Doodstream"}'
                             class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 font-mono text-sm"></textarea>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Additional query parameters to include in the URL</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Additional query parameters to include
+                            in the URL</p>
                     </div>
 
                     <!-- Headers Section -->
-                    <div class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                    <div
+                        class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
                         <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Headers</h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Request Headers <span class="text-gray-400 font-normal">(JSON)</span></label>
-                                <textarea id="encoded-request-headers" rows="3" placeholder='{"Referer": "https://example.com", "User-Agent": "Mozilla/5.0"}'
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Request
+                                    Headers <span class="text-gray-400 font-normal">(JSON)</span></label>
+                                <textarea id="encoded-request-headers" rows="3"
+                                    placeholder='{"Referer": "https://example.com", "User-Agent": "Mozilla/5.0"}'
                                     class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 font-mono text-sm"></textarea>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Response Headers <span class="text-gray-400 font-normal">(JSON, r_ prefix)</span></label>
-                                <textarea id="encoded-response-headers" rows="3" placeholder='{"Cache-Control": "no-cache"}'
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Response
+                                    Headers <span class="text-gray-400 font-normal">(JSON, r_ prefix)</span></label>
+                                <textarea id="encoded-response-headers" rows="3"
+                                    placeholder='{"Cache-Control": "no-cache"}'
                                     class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 font-mono text-sm"></textarea>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Headers for manifest response only</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Headers for manifest response
+                                    only</p>
                             </div>
                         </div>
                         <div class="mt-4">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Propagate Headers to Segments <span class="text-gray-400 font-normal">(JSON, rp_ prefix)</span></label>
-                            <textarea id="encoded-propagate-headers" rows="2" placeholder='{"content-type": "video/mp2t"}'
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Propagate
+                                Headers to Segments <span class="text-gray-400 font-normal">(JSON, rp_
+                                    prefix)</span></label>
+                            <textarea id="encoded-propagate-headers" rows="2"
+                                placeholder='{"content-type": "video/mp2t"}'
                                 class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 font-mono text-sm"></textarea>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Headers that propagate to segment URLs (useful for disguised segments)</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Headers that propagate to segment
+                                URLs (useful for disguised segments)</p>
                         </div>
                         <div class="mt-4">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Remove Response Headers <span class="text-gray-400 font-normal">(comma-separated)</span></label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Remove
+                                Response Headers <span
+                                    class="text-gray-400 font-normal">(comma-separated)</span></label>
                             <input type="text" id="encoded-remove-headers" placeholder="content-length, content-range"
                                 class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 text-sm">
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Response header names to remove from the proxied response</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Response header names to remove
+                                from the proxied response</p>
                         </div>
                     </div>
 
                     <!-- Security & Advanced Options -->
-                    <div class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
-                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Security & Advanced Options</h4>
+                    <div
+                        class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Security & Advanced
+                            Options</h4>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Expiration <span class="text-gray-400 font-normal">(seconds)</span></label>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Expiration
+                                    <span class="text-gray-400 font-normal">(seconds)</span></label>
                                 <input type="number" id="encoded-expiration" placeholder="3600"
                                     class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500">
                                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">URL expires after this time</p>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">IP Restriction</label>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">IP
+                                    Restriction</label>
                                 <input type="text" id="encoded-ip" placeholder="192.168.1.1"
                                     class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500">
                                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Restrict URL to this IP</p>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Filename</label>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Filename</label>
                                 <input type="text" id="encoded-filename" placeholder="video.mp4"
                                     class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500">
                                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">For media players</p>
@@ -738,27 +906,32 @@
                         <div class="mt-4">
                             <label class="flex items-center gap-2 cursor-pointer">
                                 <input type="checkbox" id="encoded-base64" class="checkbox-custom w-4 h-4 rounded">
-                                <span class="text-sm text-gray-700 dark:text-gray-300">Base64 encode destination URL</span>
+                                <span class="text-sm text-gray-700 dark:text-gray-300">Base64 encode destination
+                                    URL</span>
                             </label>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 ml-6">Encode the destination URL in base64 format before processing</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 ml-6">Encode the destination URL in
+                                base64 format before processing</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Generate Button -->
                 <div class="mt-6">
-                    <button onclick="generateEncodedUrl()" class="generate-btn w-full py-3.5 rounded-xl text-white font-semibold text-sm">
+                    <button onclick="generateEncodedUrl()"
+                        class="generate-btn w-full py-3.5 rounded-xl text-white font-semibold text-sm">
                         Generate Encoded URL
                     </button>
                 </div>
 
                 <!-- Output -->
                 <div id="encoded-output" class="mt-6 hidden">
-                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Generated URL</label>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Generated
+                        URL</label>
                     <div class="url-output rounded-xl p-4 text-green-400 text-sm break-all overflow-x-auto">
                         <code id="encoded-generated-url"></code>
                     </div>
-                    <button onclick="copyUrl('encoded-generated-url', event)" class="copy-btn mt-3 px-6 py-2.5 rounded-xl text-white font-semibold text-sm">
+                    <button onclick="copyUrl('encoded-generated-url', event)"
+                        class="copy-btn mt-3 px-6 py-2.5 rounded-xl text-white font-semibold text-sm">
                         📋 Copy to Clipboard
                     </button>
                 </div>
@@ -767,45 +940,57 @@
 
         <!-- XC Proxy Tab -->
         <div id="panel-xc" class="tab-panel hidden animate-fade-in">
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div
+                class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
                 <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white text-sm">📺</span>
+                    <span
+                        class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white text-sm">📺</span>
                     Xtream Codes (XC) Proxy Configuration
                 </h2>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">Generate configuration for IPTV players to use MediaFlow as an XC API proxy. Supports live streams, VOD, series, and catch-up/timeshift.</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">Generate configuration for IPTV players to use
+                    MediaFlow as an XC API proxy. Supports live streams, VOD, series, and catch-up/timeshift.</p>
 
                 <div class="space-y-4">
                     <!-- XC Provider URL -->
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">XC Provider URL <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">XC Provider URL
+                            <span class="text-red-500">*</span></label>
                         <input type="url" id="xc-provider-url" placeholder="http://provider.com:8080"
                             class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500">
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Your IPTV provider's Xtream Codes server URL (include port if needed)</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Your IPTV provider's Xtream Codes
+                            server URL (include port if needed)</p>
                     </div>
 
                     <!-- XC Credentials -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">XC Username <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">XC Username
+                                <span class="text-red-500">*</span></label>
                             <input type="text" id="xc-username" placeholder="your_xc_username"
                                 class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500">
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">XC Password <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">XC Password
+                                <span class="text-red-500">*</span></label>
                             <input type="password" id="xc-password" placeholder="your_xc_password"
                                 class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500">
                         </div>
                     </div>
 
                     <!-- Info Box -->
-                    <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
+                    <div
+                        class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
                         <div class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            <svg class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             <div class="text-sm text-blue-800 dark:text-blue-200">
                                 <p class="font-semibold mb-1">How it works</p>
-                                <p>MediaFlow acts as a stateless proxy between your IPTV player and XC provider. Your credentials are encoded in the username field, allowing the player to connect through MediaFlow without any database or storage.</p>
+                                <p>MediaFlow acts as a stateless proxy between your IPTV player and XC provider. Your
+                                    credentials are encoded in the username field, allowing the player to connect
+                                    through MediaFlow without any database or storage.</p>
                             </div>
                         </div>
                     </div>
@@ -813,7 +998,8 @@
 
                 <!-- Generate Button -->
                 <div class="mt-6">
-                    <button onclick="generateXcConfig()" class="generate-btn w-full py-3.5 rounded-xl text-white font-semibold text-sm">
+                    <button onclick="generateXcConfig()"
+                        class="generate-btn w-full py-3.5 rounded-xl text-white font-semibold text-sm">
                         Generate Configuration
                     </button>
                 </div>
@@ -821,24 +1007,30 @@
                 <!-- Output -->
                 <div id="xc-output" class="mt-6 hidden">
                     <!-- Configuration Card -->
-                    <div class="bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-xl p-6 border border-orange-200 dark:border-orange-800 mb-6">
+                    <div
+                        class="bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-xl p-6 border border-orange-200 dark:border-orange-800 mb-6">
                         <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
                             <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
                             IPTV Player Configuration
                         </h3>
-                        
+
                         <div class="space-y-4">
                             <!-- Server URL -->
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Server URL</label>
+                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Server
+                                    URL</label>
                                 <div class="flex gap-2">
-                                    <div class="url-output flex-1 rounded-xl px-4 py-3 text-green-400 text-sm break-all">
+                                    <div
+                                        class="url-output flex-1 rounded-xl px-4 py-3 text-green-400 text-sm break-all">
                                         <code id="xc-server-url"></code>
                                     </div>
-                                    <button onclick="copyXcField('xc-server-url', event)" class="copy-btn px-4 py-2 rounded-xl text-white font-semibold text-sm flex-shrink-0">
+                                    <button onclick="copyXcField('xc-server-url', event)"
+                                        class="copy-btn px-4 py-2 rounded-xl text-white font-semibold text-sm flex-shrink-0">
                                         📋
                                     </button>
                                 </div>
@@ -846,49 +1038,62 @@
 
                             <!-- Username -->
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Username</label>
+                                <label
+                                    class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Username</label>
                                 <div class="flex gap-2">
-                                    <div class="url-output flex-1 rounded-xl px-4 py-3 text-green-400 text-sm break-all">
+                                    <div
+                                        class="url-output flex-1 rounded-xl px-4 py-3 text-green-400 text-sm break-all">
                                         <code id="xc-generated-username"></code>
                                     </div>
-                                    <button onclick="copyXcField('xc-generated-username', event)" class="copy-btn px-4 py-2 rounded-xl text-white font-semibold text-sm flex-shrink-0">
+                                    <button onclick="copyXcField('xc-generated-username', event)"
+                                        class="copy-btn px-4 py-2 rounded-xl text-white font-semibold text-sm flex-shrink-0">
                                         📋
                                     </button>
                                 </div>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Base64-encoded string (compatible with all IPTV apps)</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Base64-encoded string
+                                    (compatible with all IPTV apps)</p>
                             </div>
 
                             <!-- Password -->
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Password</label>
+                                <label
+                                    class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Password</label>
                                 <div class="flex gap-2">
-                                    <div class="url-output flex-1 rounded-xl px-4 py-3 text-green-400 text-sm break-all">
+                                    <div
+                                        class="url-output flex-1 rounded-xl px-4 py-3 text-green-400 text-sm break-all">
                                         <code id="xc-generated-password"></code>
                                     </div>
-                                    <button onclick="copyXcField('xc-generated-password', event)" class="copy-btn px-4 py-2 rounded-xl text-white font-semibold text-sm flex-shrink-0">
+                                    <button onclick="copyXcField('xc-generated-password', event)"
+                                        class="copy-btn px-4 py-2 rounded-xl text-white font-semibold text-sm flex-shrink-0">
                                         📋
                                     </button>
                                 </div>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Your original XC password (unchanged)</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Your original XC password
+                                    (unchanged)</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Player-specific Instructions -->
-                    <div class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                    <div
+                        class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
                         <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                             Player Setup Instructions
                         </h4>
-                        
+
                         <div class="space-y-3 text-sm">
                             <div class="collapsible">
-                                <div class="collapsible-header flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors" onclick="toggleCollapsible(this)">
+                                <div class="collapsible-header flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                                    onclick="toggleCollapsible(this)">
                                     <span class="font-medium text-gray-700 dark:text-gray-300">📱 TiviMate</span>
-                                    <svg class="w-4 h-4 text-gray-500 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    <svg class="w-4 h-4 text-gray-500 transform transition-transform" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </div>
                                 <div class="collapsible-content">
@@ -904,10 +1109,13 @@
                             </div>
 
                             <div class="collapsible">
-                                <div class="collapsible-header flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors" onclick="toggleCollapsible(this)">
+                                <div class="collapsible-header flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                                    onclick="toggleCollapsible(this)">
                                     <span class="font-medium text-gray-700 dark:text-gray-300">📺 IPTV Smarters</span>
-                                    <svg class="w-4 h-4 text-gray-500 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    <svg class="w-4 h-4 text-gray-500 transform transition-transform" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </div>
                                 <div class="collapsible-content">
@@ -924,10 +1132,13 @@
                             </div>
 
                             <div class="collapsible">
-                                <div class="collapsible-header flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors" onclick="toggleCollapsible(this)">
+                                <div class="collapsible-header flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                                    onclick="toggleCollapsible(this)">
                                     <span class="font-medium text-gray-700 dark:text-gray-300">🧭 OTT Navigator</span>
-                                    <svg class="w-4 h-4 text-gray-500 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    <svg class="w-4 h-4 text-gray-500 transform transition-transform" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </div>
                                 <div class="collapsible-content">
@@ -945,10 +1156,14 @@
                             </div>
 
                             <div class="collapsible">
-                                <div class="collapsible-header flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors" onclick="toggleCollapsible(this)">
-                                    <span class="font-medium text-gray-700 dark:text-gray-300">🎯 Other XC-Compatible Players</span>
-                                    <svg class="w-4 h-4 text-gray-500 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                <div class="collapsible-header flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                                    onclick="toggleCollapsible(this)">
+                                    <span class="font-medium text-gray-700 dark:text-gray-300">🎯 Other XC-Compatible
+                                        Players</span>
+                                    <svg class="w-4 h-4 text-gray-500 transform transition-transform" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </div>
                                 <div class="collapsible-content">
@@ -966,8 +1181,10 @@
                     </div>
 
                     <!-- Supported Features -->
-                    <div class="mt-4 bg-green-50 dark:bg-green-900/20 rounded-xl p-4 border border-green-200 dark:border-green-800">
-                        <h4 class="text-sm font-semibold text-green-800 dark:text-green-200 mb-2">✅ Supported Features</h4>
+                    <div
+                        class="mt-4 bg-green-50 dark:bg-green-900/20 rounded-xl p-4 border border-green-200 dark:border-green-800">
+                        <h4 class="text-sm font-semibold text-green-800 dark:text-green-200 mb-2">✅ Supported Features
+                        </h4>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm text-green-700 dark:text-green-300">
                             <span>• Live TV</span>
                             <span>• VOD/Movies</span>
@@ -985,22 +1202,28 @@
 
         <!-- Acestream Tab -->
         <div id="panel-acestream" class="tab-panel hidden animate-fade-in">
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div
+                class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
                 <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-500 to-cyan-600 flex items-center justify-center text-white text-sm">🌐</span>
+                    <span
+                        class="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-500 to-cyan-600 flex items-center justify-center text-white text-sm">🌐</span>
                     Acestream Proxy URL Generator
                 </h2>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">Generate URLs to proxy Acestream P2P content through MediaFlow. Supports both HLS manifest and MPEG-TS stream output.</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">Generate URLs to proxy Acestream P2P content
+                    through MediaFlow. Supports both HLS manifest and MPEG-TS stream output.</p>
 
                 <div class="space-y-4">
                     <!-- Stream Type Selection -->
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Output Format</label>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Output
+                            Format</label>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <button onclick="selectAcestreamType('ts')" id="acestream-type-ts" class="acestream-type-btn active-acestream-type px-4 py-3 rounded-xl border-2 border-teal-500 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 font-medium text-sm transition-all">
+                            <button onclick="selectAcestreamType('ts')" id="acestream-type-ts"
+                                class="acestream-type-btn active-acestream-type px-4 py-3 rounded-xl border-2 border-teal-500 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 font-medium text-sm transition-all">
                                 📡 MPEG-TS Stream (Recommended)
                             </button>
-                            <button onclick="selectAcestreamType('hls')" id="acestream-type-hls" class="acestream-type-btn px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 font-medium text-sm transition-all hover:border-teal-300">
+                            <button onclick="selectAcestreamType('hls')" id="acestream-type-hls"
+                                class="acestream-type-btn px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 font-medium text-sm transition-all hover:border-teal-300">
                                 📺 HLS Manifest
                             </button>
                         </div>
@@ -1008,12 +1231,15 @@
 
                     <!-- Content ID Type Selection -->
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Content Identifier Type</label>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Content
+                            Identifier Type</label>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <button onclick="selectAcestreamIdType('content_id')" id="acestream-id-type-content_id" class="acestream-id-type-btn active-acestream-id-type px-4 py-3 rounded-xl border-2 border-cyan-500 bg-cyan-50 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300 font-medium text-sm transition-all">
+                            <button onclick="selectAcestreamIdType('content_id')" id="acestream-id-type-content_id"
+                                class="acestream-id-type-btn active-acestream-id-type px-4 py-3 rounded-xl border-2 border-cyan-500 bg-cyan-50 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300 font-medium text-sm transition-all">
                                 🔑 Content ID
                             </button>
-                            <button onclick="selectAcestreamIdType('infohash')" id="acestream-id-type-infohash" class="acestream-id-type-btn px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 font-medium text-sm transition-all hover:border-cyan-300">
+                            <button onclick="selectAcestreamIdType('infohash')" id="acestream-id-type-infohash"
+                                class="acestream-id-type-btn px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 font-medium text-sm transition-all hover:border-cyan-300">
                                 🧲 Infohash (Magnet)
                             </button>
                         </div>
@@ -1021,40 +1247,55 @@
 
                     <!-- Content ID Input -->
                     <div id="acestream-content-id-input">
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Content ID <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Content ID
+                            <span class="text-red-500">*</span></label>
                         <input type="text" id="acestream-content-id" placeholder="Enter Acestream content ID"
                             class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white focus:outline-none focus:border-teal-500 font-mono text-sm">
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">The content ID from acestream:// links</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">The content ID from acestream:// links
+                        </p>
                     </div>
 
                     <!-- Infohash Input (hidden by default) -->
                     <div id="acestream-infohash-input" class="hidden">
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Infohash <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Infohash <span
+                                class="text-red-500">*</span></label>
                         <input type="text" id="acestream-infohash" placeholder="Enter 40-character infohash"
                             class="input-field w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white focus:outline-none focus:border-teal-500 font-mono text-sm">
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">40-character hex string from magnet links (e.g., b04372b9543d763bd2dbd2a1842d9723fd080076)</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">40-character hex string from magnet
+                            links (e.g., b04372b9543d763bd2dbd2a1842d9723fd080076)</p>
                     </div>
 
                     <!-- Start Offset Section (Live Streams) -->
-                    <div class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
-                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Start Offset <span class="text-gray-400 font-normal">(Live Stream Prebuffer)</span></h4>
+                    <div
+                        class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Start Offset <span
+                                class="text-gray-400 font-normal">(Live Stream Prebuffer)</span></h4>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Time Offset (seconds)</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Time Offset
+                                (seconds)</label>
                             <input type="number" id="acestream-start-offset" placeholder="-18" step="0.1"
                                 class="input-field w-full sm:w-48 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-teal-500 text-sm">
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Use negative values to start behind the live edge (e.g., -18 to start 18 seconds behind). This enables the prebuffer to work on live streams.</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Use negative values to start behind
+                                the live edge (e.g., -18 to start 18 seconds behind). This enables the prebuffer to work
+                                on live streams.</p>
                         </div>
                     </div>
 
                     <!-- Info Box -->
-                    <div class="bg-teal-50 dark:bg-teal-900/20 rounded-xl p-4 border border-teal-200 dark:border-teal-800">
+                    <div
+                        class="bg-teal-50 dark:bg-teal-900/20 rounded-xl p-4 border border-teal-200 dark:border-teal-800">
                         <div class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-teal-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            <svg class="w-5 h-5 text-teal-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             <div class="text-sm text-teal-800 dark:text-teal-200">
                                 <p class="font-semibold mb-1">Requirements</p>
-                                <p>Acestream proxy requires a running Acestream engine accessible from the MediaFlow server. Make sure <code class="bg-teal-100 dark:bg-teal-800 px-1 rounded">ENABLE_ACESTREAM=true</code> is set in your MediaFlow configuration.</p>
+                                <p>Acestream proxy requires a running Acestream engine accessible from the MediaFlow
+                                    server. Make sure <code
+                                        class="bg-teal-100 dark:bg-teal-800 px-1 rounded">ENABLE_ACESTREAM=true</code>
+                                    is set in your MediaFlow configuration.</p>
                             </div>
                         </div>
                     </div>
@@ -1062,35 +1303,42 @@
 
                 <!-- Generate Button -->
                 <div class="mt-6">
-                    <button onclick="generateAcestreamUrl()" class="w-full py-3.5 rounded-xl text-white font-semibold text-sm bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 transition-all shadow-lg hover:shadow-xl">
+                    <button onclick="generateAcestreamUrl()"
+                        class="w-full py-3.5 rounded-xl text-white font-semibold text-sm bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 transition-all shadow-lg hover:shadow-xl">
                         Generate Acestream URL
                     </button>
                 </div>
 
                 <!-- Output -->
                 <div id="acestream-output" class="mt-6 hidden">
-                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Generated URL</label>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Generated
+                        URL</label>
                     <div class="url-output rounded-xl p-4 text-green-400 text-sm break-all overflow-x-auto">
                         <code id="acestream-generated-url"></code>
                     </div>
-                    <button onclick="copyUrl('acestream-generated-url', event)" class="copy-btn mt-3 px-6 py-2.5 rounded-xl text-white font-semibold text-sm">
+                    <button onclick="copyUrl('acestream-generated-url', event)"
+                        class="copy-btn mt-3 px-6 py-2.5 rounded-xl text-white font-semibold text-sm">
                         📋 Copy to Clipboard
                     </button>
 
                     <!-- Usage Examples -->
-                    <div class="mt-4 bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                    <div
+                        class="mt-4 bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
                         <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Usage Examples</h4>
                         <div class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                             <p><strong>VLC:</strong> Media → Open Network Stream → Paste the URL</p>
-                            <p><strong>mpv:</strong> <code class="bg-gray-200 dark:bg-gray-700 px-1 rounded">mpv "YOUR_URL"</code></p>
+                            <p><strong>mpv:</strong> <code
+                                    class="bg-gray-200 dark:bg-gray-700 px-1 rounded">mpv "YOUR_URL"</code></p>
                             <p><strong>Kodi:</strong> Add as a network source or use with Stremio addon</p>
-                            <p><strong>Web Player:</strong> Use with any HLS-compatible web player (hls.js, video.js)</p>
+                            <p><strong>Web Player:</strong> Use with any HLS-compatible web player (hls.js, video.js)
+                            </p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Supported Features -->
-                <div class="mt-6 bg-green-50 dark:bg-green-900/20 rounded-xl p-4 border border-green-200 dark:border-green-800">
+                <div
+                    class="mt-6 bg-green-50 dark:bg-green-900/20 rounded-xl p-4 border border-green-200 dark:border-green-800">
                     <h4 class="text-sm font-semibold text-green-800 dark:text-green-200 mb-2">✅ Features</h4>
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm text-green-700 dark:text-green-300">
                         <span>• HLS Output</span>
@@ -1124,14 +1372,14 @@
             document.querySelectorAll('.tab-panel').forEach(panel => {
                 panel.classList.add('hidden');
             });
-            
+
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('tab-active');
                 btn.classList.add('bg-white', 'dark:bg-gray-800', 'text-gray-700', 'dark:text-gray-300', 'shadow-md');
             });
-            
+
             document.getElementById(`panel-${tabName}`).classList.remove('hidden');
-            
+
             const activeTab = document.getElementById(`tab-${tabName}`);
             activeTab.classList.add('tab-active');
             activeTab.classList.remove('bg-white', 'dark:bg-gray-800', 'text-gray-700', 'dark:text-gray-300', 'shadow-md');
@@ -1142,14 +1390,14 @@
             document.querySelectorAll('.proxy-form').forEach(form => {
                 form.classList.add('hidden');
             });
-            
+
             document.querySelectorAll('.proxy-type-btn').forEach(btn => {
                 btn.classList.remove('active-proxy-type', 'border-indigo-500', 'bg-indigo-50', 'dark:bg-indigo-900/30', 'text-indigo-700', 'dark:text-indigo-300');
                 btn.classList.add('border-gray-200', 'dark:border-gray-600', 'bg-gray-50', 'dark:bg-gray-700/50', 'text-gray-700', 'dark:text-gray-300');
             });
-            
+
             document.getElementById(`form-${type}`).classList.remove('hidden');
-            
+
             const activeBtn = document.getElementById(`proxy-type-${type}`);
             activeBtn.classList.add('active-proxy-type', 'border-indigo-500', 'bg-indigo-50', 'dark:bg-indigo-900/30', 'text-indigo-700', 'dark:text-indigo-300');
             activeBtn.classList.remove('border-gray-200', 'dark:border-gray-600', 'bg-gray-50', 'dark:bg-gray-700/50', 'text-gray-700', 'dark:text-gray-300');
@@ -1158,11 +1406,11 @@
         // Header management for proxy URLs
         let proxyHeaderCount = 0;
         let streamResponseHeaderCount = 0;
-        
+
         function addProxyHeader() {
             const container = document.getElementById('proxy-headers-container');
             const headerId = `proxy-header-${proxyHeaderCount++}`;
-            
+
             const headerRow = document.createElement('div');
             headerRow.id = headerId;
             headerRow.className = 'flex gap-2 items-center';
@@ -1193,12 +1441,12 @@
             });
             return headers;
         }
-        
+
         // Stream response headers management
         function addStreamResponseHeader() {
             const container = document.getElementById('stream-response-headers-container');
             const headerId = `stream-response-header-${streamResponseHeaderCount++}`;
-            
+
             const headerRow = document.createElement('div');
             headerRow.id = headerId;
             headerRow.className = 'flex gap-2 items-center';
@@ -1229,15 +1477,15 @@
             });
             return headers;
         }
-        
+
         // HLS response headers management
         let hlsResponseHeaderCount = 0;
         let hlsPropagateHeaderCount = 0;
-        
+
         function addHlsResponseHeader() {
             const container = document.getElementById('hls-response-headers-container');
             const headerId = `hls-response-header-${hlsResponseHeaderCount++}`;
-            
+
             const headerRow = document.createElement('div');
             headerRow.id = headerId;
             headerRow.className = 'flex gap-2 items-center';
@@ -1268,12 +1516,12 @@
             });
             return headers;
         }
-        
+
         // HLS propagate headers management (rp_ prefix)
         function addHlsPropagateHeader() {
             const container = document.getElementById('hls-propagate-headers-container');
             const headerId = `hls-propagate-header-${hlsPropagateHeaderCount++}`;
-            
+
             const headerRow = document.createElement('div');
             headerRow.id = headerId;
             headerRow.className = 'flex gap-2 items-center';
@@ -1304,14 +1552,14 @@
             });
             return headers;
         }
-        
+
         // MPD response headers management
         let mpdResponseHeaderCount = 0;
-        
+
         function addMpdResponseHeader() {
             const container = document.getElementById('mpd-response-headers-container');
             const headerId = `mpd-response-header-${mpdResponseHeaderCount++}`;
-            
+
             const headerRow = document.createElement('div');
             headerRow.id = headerId;
             headerRow.className = 'flex gap-2 items-center';
@@ -1342,14 +1590,14 @@
             });
             return headers;
         }
-        
+
         // Extractor request headers management
         let extractorRequestHeaderCount = 0;
-        
+
         function addExtractorRequestHeader() {
             const container = document.getElementById('extractor-request-headers-container');
             const headerId = `extractor-request-header-${extractorRequestHeaderCount++}`;
-            
+
             const headerRow = document.createElement('div');
             headerRow.id = headerId;
             headerRow.className = 'flex gap-2 items-center';
@@ -1380,14 +1628,14 @@
             });
             return headers;
         }
-        
+
         // Extractor response headers management
         let extractorResponseHeaderCount = 0;
-        
+
         function addExtractorResponseHeader() {
             const container = document.getElementById('extractor-response-headers-container');
             const headerId = `extractor-response-header-${extractorResponseHeaderCount++}`;
-            
+
             const headerRow = document.createElement('div');
             headerRow.id = headerId;
             headerRow.className = 'flex gap-2 items-center';
@@ -1423,108 +1671,108 @@
         function generateProxyUrl() {
             const baseUrl = window.location.origin;
             const apiPassword = document.getElementById('globalApiPassword').value.trim();
-            
+
             const hlsForm = document.getElementById('form-hls');
             const mpdForm = document.getElementById('form-mpd');
             const streamForm = document.getElementById('form-stream');
-            
+
             let url = '';
             let params = new URLSearchParams();
-            
+
             if (!hlsForm.classList.contains('hidden')) {
                 const destination = document.getElementById('hls-destination').value.trim();
                 if (!destination) {
                     alert('Please enter a destination URL');
                     return;
                 }
-                
+
                 url = `${baseUrl}/proxy/hls/manifest.m3u8`;
                 params.append('d', destination);
-                
+
                 const keyUrl = document.getElementById('hls-key-url').value.trim();
                 if (keyUrl) params.append('key_url', keyUrl);
-                
+
                 if (document.getElementById('hls-force-playlist').checked) params.append('force_playlist_proxy', 'true');
                 if (document.getElementById('hls-key-only').checked) params.append('key_only_proxy', 'true');
                 if (document.getElementById('hls-no-proxy').checked) params.append('no_proxy', 'true');
                 if (document.getElementById('hls-max-res').checked) params.append('max_res', 'true');
-                
+
                 // Resolution selection
                 const resolution = document.getElementById('hls-resolution').value;
                 if (resolution) params.append('resolution', resolution);
-                
+
                 // Skip segments
                 const skipSegments = document.getElementById('hls-skip-segments').value.trim();
                 if (skipSegments) params.append('skip', skipSegments);
-                
+
                 // Start offset (for live streams)
                 const startOffset = document.getElementById('hls-start-offset').value.trim();
                 if (startOffset) params.append('start_offset', startOffset);
-                
+
                 // Add HLS response headers (r_ prefix)
                 const hlsResponseHeaders = getHlsResponseHeaders();
                 for (const [name, value] of Object.entries(hlsResponseHeaders)) {
                     params.append(`r_${name}`, value);
                 }
-                
+
                 // Add HLS propagate headers (rp_ prefix)
                 const hlsPropagateHeaders = getHlsPropagateHeaders();
                 for (const [name, value] of Object.entries(hlsPropagateHeaders)) {
                     params.append(`rp_${name}`, value);
                 }
-                
+
                 // Add HLS remove headers (x_headers)
                 const hlsRemoveHeaders = document.getElementById('hls-remove-headers').value.trim();
                 if (hlsRemoveHeaders) {
                     params.append('x_headers', hlsRemoveHeaders);
                 }
-                
+
             } else if (!mpdForm.classList.contains('hidden')) {
                 const destination = document.getElementById('mpd-destination').value.trim();
                 if (!destination) {
                     alert('Please enter a destination URL');
                     return;
                 }
-                
+
                 url = `${baseUrl}/proxy/mpd/manifest.m3u8`;
                 params.append('d', destination);
-                
+
                 const keyId = document.getElementById('mpd-key-id').value.trim();
                 const key = document.getElementById('mpd-key').value.trim();
                 if (keyId) params.append('key_id', keyId);
                 if (key) params.append('key', key);
-                
+
                 // Resolution selection
                 const resolution = document.getElementById('mpd-resolution').value;
                 if (resolution) params.append('resolution', resolution);
-                
+
                 // Skip segments
                 const skipSegments = document.getElementById('mpd-skip-segments').value.trim();
                 if (skipSegments) params.append('skip', skipSegments);
-                
+
                 // Start offset (for live streams)
                 const startOffset = document.getElementById('mpd-start-offset').value.trim();
                 if (startOffset) params.append('start_offset', startOffset);
-                
+
                 // Add MPD response headers (r_ prefix)
                 const mpdResponseHeaders = getMpdResponseHeaders();
                 for (const [name, value] of Object.entries(mpdResponseHeaders)) {
                     params.append(`r_${name}`, value);
                 }
-                
+
                 // Add MPD remove headers (x_headers)
                 const mpdRemoveHeaders = document.getElementById('mpd-remove-headers').value.trim();
                 if (mpdRemoveHeaders) {
                     params.append('x_headers', mpdRemoveHeaders);
                 }
-                
+
             } else if (!streamForm.classList.contains('hidden')) {
                 const destination = document.getElementById('stream-destination').value.trim();
                 if (!destination) {
                     alert('Please enter a destination URL');
                     return;
                 }
-                
+
                 const filename = document.getElementById('stream-filename').value.trim();
                 if (filename) {
                     url = `${baseUrl}/proxy/stream/${encodeURIComponent(filename)}`;
@@ -1532,33 +1780,33 @@
                     url = `${baseUrl}/proxy/stream`;
                 }
                 params.append('d', destination);
-                
+
                 // Add stream response headers (r_ prefix)
                 const responseHeaders = getStreamResponseHeaders();
                 for (const [name, value] of Object.entries(responseHeaders)) {
                     params.append(`r_${name}`, value);
                 }
-                
+
                 // Add remove headers (x_headers)
                 const removeHeaders = document.getElementById('stream-remove-headers').value.trim();
                 if (removeHeaders) {
                     params.append('x_headers', removeHeaders);
                 }
             }
-            
+
             // Add request headers
             const headers = getProxyHeaders();
             for (const [name, value] of Object.entries(headers)) {
                 params.append(`h_${name}`, value);
             }
-            
+
             // Add API password
             if (apiPassword) {
                 params.append('api_password', apiPassword);
             }
-            
+
             const finalUrl = `${url}?${params.toString()}`;
-            
+
             document.getElementById('proxy-generated-url').textContent = finalUrl;
             document.getElementById('proxy-output').classList.remove('hidden');
         }
@@ -1567,10 +1815,10 @@
         function generateExtractorUrl() {
             const baseUrl = window.location.origin;
             const apiPassword = document.getElementById('globalApiPassword').value.trim();
-            
+
             const host = document.getElementById('extractor-host').value;
             const destination = document.getElementById('extractor-destination').value.trim();
-            
+
             if (!host) {
                 alert('Please select a video host');
                 return;
@@ -1579,11 +1827,11 @@
                 alert('Please enter a video URL');
                 return;
             }
-            
+
             const params = new URLSearchParams();
             params.append('host', host);
             params.append('d', destination);
-            
+
             if (document.getElementById('extractor-redirect').checked) {
                 params.append('redirect_stream', 'true');
             }
@@ -1593,7 +1841,7 @@
             if (document.getElementById('extractor-no-proxy').checked) {
                 params.append('no_proxy', 'true');
             }
-            
+
             const extraParams = document.getElementById('extractor-extra-params').value.trim();
             if (extraParams) {
                 try {
@@ -1604,31 +1852,31 @@
                     return;
                 }
             }
-            
+
             // Add request headers (h_ prefix)
             const requestHeaders = getExtractorRequestHeaders();
             for (const [name, value] of Object.entries(requestHeaders)) {
                 params.append(`h_${name}`, value);
             }
-            
+
             // Add response headers (r_ prefix)
             const responseHeaders = getExtractorResponseHeaders();
             for (const [name, value] of Object.entries(responseHeaders)) {
                 params.append(`r_${name}`, value);
             }
-            
+
             // Add remove headers (x_headers)
             const removeHeaders = document.getElementById('extractor-remove-headers').value.trim();
             if (removeHeaders) {
                 params.append('x_headers', removeHeaders);
             }
-            
+
             if (apiPassword) {
                 params.append('api_password', apiPassword);
             }
-            
+
             const finalUrl = `${baseUrl}/extractor/video?${params.toString()}`;
-            
+
             document.getElementById('extractor-generated-url').textContent = finalUrl;
             document.getElementById('extractor-output').classList.remove('hidden');
         }
@@ -1639,7 +1887,7 @@
             const endpoint = document.getElementById('encoded-endpoint').value;
             const destination = document.getElementById('encoded-destination').value.trim();
             const apiPassword = document.getElementById('globalApiPassword').value.trim();
-            
+
             if (!proxyUrl) {
                 alert('Please enter the MediaFlow proxy URL');
                 return;
@@ -1652,7 +1900,7 @@
                 alert('Please enter a destination URL');
                 return;
             }
-            
+
             // Build request body
             const requestBody = {
                 mediaflow_proxy_url: proxyUrl,
@@ -1664,7 +1912,7 @@
                 propagate_response_headers: {},
                 remove_response_headers: []
             };
-            
+
             // Parse query params
             const queryParamsStr = document.getElementById('encoded-query-params').value.trim();
             if (queryParamsStr) {
@@ -1675,7 +1923,7 @@
                     return;
                 }
             }
-            
+
             // Parse request headers
             const requestHeadersStr = document.getElementById('encoded-request-headers').value.trim();
             if (requestHeadersStr) {
@@ -1686,7 +1934,7 @@
                     return;
                 }
             }
-            
+
             // Parse response headers
             const responseHeadersStr = document.getElementById('encoded-response-headers').value.trim();
             if (responseHeadersStr) {
@@ -1697,7 +1945,7 @@
                     return;
                 }
             }
-            
+
             // Parse propagate response headers
             const propagateHeadersStr = document.getElementById('encoded-propagate-headers').value.trim();
             if (propagateHeadersStr) {
@@ -1714,23 +1962,23 @@
             if (removeHeadersStr) {
                 requestBody.remove_response_headers = removeHeadersStr.split(',').map(h => h.trim()).filter(h => h);
             }
-            
+
             // Add optional fields
             const expiration = document.getElementById('encoded-expiration').value.trim();
             if (expiration) requestBody.expiration = parseInt(expiration);
-            
+
             const ip = document.getElementById('encoded-ip').value.trim();
             if (ip) requestBody.ip = ip;
-            
+
             const filename = document.getElementById('encoded-filename').value.trim();
             if (filename) requestBody.filename = filename;
-            
+
             if (apiPassword) requestBody.api_password = apiPassword;
-            
+
             if (document.getElementById('encoded-base64').checked) {
                 requestBody.base64_encode_destination = true;
             }
-            
+
             try {
                 const response = await fetch('/generate_url', {
                     method: 'POST',
@@ -1739,16 +1987,16 @@
                     },
                     body: JSON.stringify(requestBody)
                 });
-                
+
                 if (!response.ok) {
                     const error = await response.json();
                     throw new Error(error.detail || 'Failed to generate URL');
                 }
-                
+
                 const data = await response.json();
                 document.getElementById('encoded-generated-url').textContent = data.url;
                 document.getElementById('encoded-output').classList.remove('hidden');
-                
+
             } catch (error) {
                 alert('Error generating URL: ' + error.message);
             }
@@ -1759,7 +2007,7 @@
             const url = document.getElementById(elementId).textContent;
             const btn = event.currentTarget;
             const originalText = btn.innerHTML;
-            
+
             navigator.clipboard.writeText(url).then(() => {
                 btn.innerHTML = '✓ Copied!';
                 setTimeout(() => {
@@ -1825,7 +2073,7 @@
             const text = document.getElementById(elementId).textContent;
             const btn = event.currentTarget;
             const originalText = btn.innerHTML;
-            
+
             navigator.clipboard.writeText(text).then(() => {
                 btn.innerHTML = '✓';
                 setTimeout(() => {
@@ -1839,7 +2087,7 @@
         function toggleCollapsible(header) {
             const content = header.nextElementSibling;
             const icon = header.querySelector('svg');
-            
+
             content.classList.toggle('open');
             icon.classList.toggle('rotate-180');
         }
@@ -1850,7 +2098,7 @@
                 btn.classList.remove('active-acestream-type', 'border-teal-500', 'bg-teal-50', 'dark:bg-teal-900/30', 'text-teal-700', 'dark:text-teal-300');
                 btn.classList.add('border-gray-200', 'dark:border-gray-600', 'bg-gray-50', 'dark:bg-gray-700/50', 'text-gray-700', 'dark:text-gray-300');
             });
-            
+
             const activeBtn = document.getElementById(`acestream-type-${type}`);
             activeBtn.classList.add('active-acestream-type', 'border-teal-500', 'bg-teal-50', 'dark:bg-teal-900/30', 'text-teal-700', 'dark:text-teal-300');
             activeBtn.classList.remove('border-gray-200', 'dark:border-gray-600', 'bg-gray-50', 'dark:bg-gray-700/50', 'text-gray-700', 'dark:text-gray-300');
@@ -1862,7 +2110,7 @@
                 btn.classList.remove('active-acestream-id-type', 'border-cyan-500', 'bg-cyan-50', 'dark:bg-cyan-900/30', 'text-cyan-700', 'dark:text-cyan-300');
                 btn.classList.add('border-gray-200', 'dark:border-gray-600', 'bg-gray-50', 'dark:bg-gray-700/50', 'text-gray-700', 'dark:text-gray-300');
             });
-            
+
             const activeBtn = document.getElementById(`acestream-id-type-${type}`);
             activeBtn.classList.add('active-acestream-id-type', 'border-cyan-500', 'bg-cyan-50', 'dark:bg-cyan-900/30', 'text-cyan-700', 'dark:text-cyan-300');
             activeBtn.classList.remove('border-gray-200', 'dark:border-gray-600', 'bg-gray-50', 'dark:bg-gray-700/50', 'text-gray-700', 'dark:text-gray-300');
@@ -1881,14 +2129,14 @@
         function generateAcestreamUrl() {
             const baseUrl = window.location.origin;
             const apiPassword = document.getElementById('globalApiPassword').value.trim();
-            
+
             // Determine output type (TS or HLS)
             const isTs = document.getElementById('acestream-type-ts').classList.contains('active-acestream-type');
             const endpoint = isTs ? '/proxy/acestream/stream' : '/proxy/acestream/manifest.m3u8';
-            
+
             // Determine ID type and get value
             const isContentId = document.getElementById('acestream-id-type-content_id').classList.contains('active-acestream-id-type');
-            
+
             let idParam, idValue;
             if (isContentId) {
                 idValue = document.getElementById('acestream-content-id').value.trim();
@@ -1910,23 +2158,23 @@
                     return;
                 }
             }
-            
+
             // Build URL
             const params = new URLSearchParams();
             params.append(idParam, idValue);
-            
+
             if (apiPassword) {
                 params.append('api_password', apiPassword);
             }
-            
+
             // Start offset (for live streams) - only for HLS output
             if (!isTs) {
                 const startOffset = document.getElementById('acestream-start-offset').value.trim();
                 if (startOffset) params.append('start_offset', startOffset);
             }
-            
+
             const finalUrl = `${baseUrl}${endpoint}?${params.toString()}`;
-            
+
             document.getElementById('acestream-generated-url').textContent = finalUrl;
             document.getElementById('acestream-output').classList.remove('hidden');
         }
@@ -1934,7 +2182,7 @@
         // Check for hash on page load to switch to XC or Acestream tab
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('encoded-proxy-url').value = window.location.origin;
-            
+
             // Check if URL has hash
             if (window.location.hash === '#xc') {
                 switchTab('xc');
@@ -1944,4 +2192,5 @@
         });
     </script>
 </body>
+
 </html>

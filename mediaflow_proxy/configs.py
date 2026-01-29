@@ -67,6 +67,11 @@ class Settings(BaseSettings):
     mpd_live_init_cache_ttl: int = 60  # TTL (seconds) for live init segment cache; 0 disables caching.
     mpd_live_playlist_depth: int = 8  # Number of recent segments to expose per live playlist variant.
 
+    # FFmpeg Transcoding settings
+    ffmpeg_remux: bool = False  # Whether to use FFmpeg remuxing for MPD streams.
+    ffmpeg_temp_dir: str = "temp_ffmpeg"  # Directory to store temporary HLS segments.
+    ffmpeg_idle_timeout: int = 120  # Seconds of inactivity before terminating an idle FFmpeg stream.
+
     # Acestream settings
     enable_acestream: bool = False  # Whether to enable Acestream proxy support.
     acestream_host: str = "localhost"  # Acestream engine host.

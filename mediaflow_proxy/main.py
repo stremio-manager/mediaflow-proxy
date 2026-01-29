@@ -25,6 +25,7 @@ from mediaflow_proxy.utils.crypto_utils import EncryptionHandler, EncryptionMidd
 from mediaflow_proxy.utils.http_utils import encode_mediaflow_proxy_url
 from mediaflow_proxy.utils.base64_utils import encode_url_to_base64, decode_base64_url, is_base64_url
 from mediaflow_proxy.utils.acestream import acestream_manager
+from mediaflow_proxy.utils.ffmpeg_manager import ffmpeg_manager
 
 logging.basicConfig(level=settings.log_level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -38,6 +39,10 @@ async def lifespan(app: FastAPI):
         logger.info("Clearing caches on startup (CLEAR_CACHE_ON_STARTUP=true)")
         EXTRACTOR_CACHE.clear()
         logger.info("Extractor cache cleared")
+
+    if settings.ffmpeg_remux:
+        asyncio.create_task(ffmpeg_manager.cleanup_loop())
+        logger.info("FFmpeg manager cleanup loop started")
 
     yield
 
