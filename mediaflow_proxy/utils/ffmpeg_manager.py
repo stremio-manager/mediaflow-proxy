@@ -100,9 +100,9 @@ class FFmpegManager:
             "-hide_banner",
             "-loglevel", "warning",
             # --- CRITICAL: Timestamp and sync fixes ---
-            "-fflags", "+genpts+discardcorrupt+igndts",
-            "-analyzeduration", "20000000",
-            "-probesize", "20000000",
+            "-fflags", "+genpts", # Minimal flags: generate PTS if missing, trust source otherwise
+            "-analyzeduration", "5000000", # Reduced to 5MB for faster startup
+            "-probesize", "5000000",
             # --- Network resilience ---
             "-reconnect", "1",
             "-reconnect_streamed", "1",
@@ -154,7 +154,7 @@ class FFmpegManager:
             "-avoid_negative_ts", "make_zero",
             "-max_muxing_queue_size", "4096",
             "-f", "hls",
-            "-hls_time", "6", # Increased to 6s to match typical source GOP sizes (prevents irregular segments)
+            "-hls_time", "4", # Standard 4s segments
             "-hls_list_size", "10",
             "-hls_flags", "delete_segments+independent_segments",
             "-hls_segment_filename", os.path.join(stream_dir, "segment_%03d.ts"),
