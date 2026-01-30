@@ -53,10 +53,6 @@ class DLHDExtractor:
         self.mediaflow_endpoint = "hls_manifest_proxy"
         self._session_lock = asyncio.Lock()
         self.proxies = proxies or []
-        self._extraction_locks: Dict[str, asyncio.Lock] = {}
-        
-        # In-memory stream cache only (no file persistence)
-        self._stream_data_cache: Dict[str, Dict[str, Any]] = {}
         
         # Iframe host list (will be fetched dynamically)
         self.iframe_hosts = []
@@ -215,23 +211,26 @@ class DLHDExtractor:
         return headers
 
     async def _handle_response_content(self, response: aiohttp.ClientResponse) -> str:
-        """Gestisce la decompressione manuale del corpo della risposta (zstd, gzip, etc.)."""
-        content_encoding = response.headers.get('Content-Encoding')
+        """Handles manual decompression of the response body (zstd, gzip, etc.)."""
+        content_encoding = response.headers.get('Content-Encoding', '').lower()
         raw_body = await response.read()
         
         try:
             if content_encoding == 'zstd':
+                if zstandard is None:
+                    logger.warning("zstd compression detected but 'zstandard' library is not installed.")
+                    return raw_body.decode(response.charset or 'utf-8', errors='replace')
+                
                 logger.info(f"Detected zstd compression for {response.url}. Decompressing...")
                 try:
                     dctx = zstandard.ZstdDecompressor()
-                    # ✅ MODIFICA: Utilizza stream_reader per gestire frame senza dimensione del contenuto.
-                    # Questo risolve l'errore "could not determine content size in frame header".
+                    # Use stream_reader to handle frames without content size.
                     with dctx.stream_reader(raw_body) as reader:
                         decompressed_body = reader.read()
                     return decompressed_body.decode(response.charset or 'utf-8')
-                except zstandard.ZstdError as e:
+                except Exception as e:
                     logger.error(f"Zstd decompression error: {e}. Content may be incomplete or corrupted.")
-                    raise ExtractorError(f"Fallimento decompressione zstd: {e}")
+                    raise ExtractorError(f"Zstd decompression failure: {e}")
             elif content_encoding == 'gzip':
                 logger.info(f"Detected gzip compression for {response.url}. Decompressing...")
                 decompressed_body = gzip.decompress(raw_body)
@@ -241,8 +240,7 @@ class DLHDExtractor:
                 decompressed_body = zlib.decompress(raw_body)
                 return decompressed_body.decode(response.charset or 'utf-8')
             else:
-                # Nessuna compressione o compressione non gestita, prova a decodificare direttamente
-                # ✅ FIX: Usa 'errors=replace' per evitare crash su byte non validi
+                # No compression or unhandled compression, try to decode directly
                 return raw_body.decode(response.charset or 'utf-8', errors='replace')
         except Exception as e:
             logger.error(f"Error during decompression/decoding of content from {response.url}: {e}")
@@ -519,76 +517,19 @@ class DLHDExtractor:
 
             logger.info(f"📺 Extraction for channel ID: {channel_id}")
 
-            # Controlla la cache prima di procedere
-            if not force_refresh and channel_id in self._stream_data_cache:
-                logger.info(f"✅ Found cached data for channel ID: {channel_id}. Verifying validity...")
-                cached_data = self._stream_data_cache[channel_id]
-                stream_url = cached_data.get("destination_url")
-                stream_headers = cached_data.get("request_headers", {})
-                expires_at = cached_data.get("expires_at")
-
-                is_valid = False
-                
-                # ✅ Check expiry first (con buffer di 30 secondi)
-                if expires_at and time.time() > (expires_at - 30):
-                     logger.warning(f"⚠️ Cache expired for channel ID {channel_id} (expires_at: {expires_at}).")
-                     is_valid = False
-                elif stream_url:
-                    try:
-                        async with aiohttp.ClientSession(timeout=ClientTimeout(total=10)) as validation_session:
-                            async with validation_session.head(stream_url, headers=stream_headers, ssl=False) as response:
-                                if response.status == 200:
-                                    is_valid = True
-                                    logger.info(f"✅ Cache for channel ID {channel_id} is valid.")
-                                else:
-                                    logger.warning(f"⚠️ Cache for channel ID {channel_id} not valid. Status: {response.status}. Proceeding with extraction.")
-                    except Exception as e:
-                        logger.warning(f"⚠️ Error during cache validation for {channel_id}: {e}. Proceeding with extraction.")
-                
-                if not is_valid:
-                    if channel_id in self._stream_data_cache:
-                        del self._stream_data_cache[channel_id]
-                    self._save_cache()
-                    logger.info(f"🗑️ Cache invalidated for channel ID {channel_id}.")
+            # Proceed with direct extraction
+            try:
+                result = await get_stream_data_direct(channel_id, self.iframe_hosts)
+            except ExtractorError:
+                # If current hosts fail, try updating them
+                logger.warning("⚠️ All current hosts failed. Attempting to update host list...")
+                if await self._fetch_iframe_hosts():
+                     logger.info(f"🔄 Retrying with new hosts: {self.iframe_hosts}")
+                     result = await get_stream_data_direct(channel_id, self.iframe_hosts)
                 else:
-                    return cached_data
-
-            # Usa un lock per prevenire estrazioni simultanee per lo stesso canale
-            if channel_id not in self._extraction_locks:
-                self._extraction_locks[channel_id] = asyncio.Lock()
+                    raise
             
-            lock = self._extraction_locks[channel_id]
-            async with lock:
-                # Ricontrolla la cache dopo aver acquisito il lock
-                if not force_refresh and channel_id in self._stream_data_cache:
-                    cached_data = self._stream_data_cache[channel_id]
-                    expires_at = cached_data.get("expires_at")
-                    
-                    # Se è scaduta anche la nuova cache (improbabile ma possibile), procedi con estrazione
-                    if expires_at and time.time() > (expires_at - 30):
-                        logger.info(f"⚠️ Cache (rechecked) expired for {channel_id}, proceeding with new extraction.")
-                    else:
-                        logger.info(f"✅ Data for channel {channel_id} found in cache after waiting for lock.")
-                        return self._stream_data_cache[channel_id]
-
-                # Proceed with direct extraction
-                logger.info(f"⚙️ No valid cache for {channel_id}, starting direct extraction...")
-                
-                try:
-                    result = await get_stream_data_direct(channel_id, self.iframe_hosts)
-                except ExtractorError:
-                    # If current hosts fail, try updating them
-                    logger.warning("⚠️ All current hosts failed. Attempting to update host list...")
-                    if await self._fetch_iframe_hosts():
-                         logger.info(f"🔄 Retrying with new hosts: {self.iframe_hosts}")
-                         result = await get_stream_data_direct(channel_id, self.iframe_hosts)
-                    else:
-                        raise
-                
-                # Save to in-memory cache
-                self._stream_data_cache[channel_id] = result
-                
-                return result
+            return result
             
         except Exception as e:
             # Per errori 403, non loggare il traceback perché sono errori attesi (servizio temporaneamente non disponibile)
@@ -601,7 +542,7 @@ class DLHDExtractor:
 
     async def _extract_lovecdn_stream(self, iframe_url: str, iframe_content: str) -> Dict[str, Any]:
         """
-        Estrattore alternativo per iframe lovecdn.ru che usa un formato diverso.
+        Alternative extractor for lovecdn.ru iframes which use a different format.
         """
         try:
             # Cerca pattern di stream URL diretto
@@ -815,41 +756,41 @@ class DLHDExtractor:
             params['channel_key'] = obfuscated_data.get('channel_key')
             secret_key = obfuscated_data.get('secret_key')
             if secret_key:
-                logger.info(f"✅ Secret key estratta per calcolo nonce")
+                logger.info(f"✅ Secret key extracted for nonce calculation")
         else:
-            # Fallback: estrazione euristica originale
-            logger.info("Pattern obfuscated non trovato, provo estrazione euristica...")
+            # Fallback: original heuristic extraction
+            logger.info("Obfuscated pattern not found, trying heuristic extraction...")
 
-            # Cerca il JWT (inizia con eyJ...)
+            # Search for JWT (starts with eyJ...)
             jwt_match = re.search(r'["\'](eyJ[a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+)["\']', iframe_content)
             if jwt_match:
                 params['auth_token'] = jwt_match.group(1)
-                logger.info("✅ Trovato possibile JWT Token")
+                logger.info("✅ Found possible JWT Token")
 
-            # Cerca Channel Key (es: premium853) - o stringa alfanumerica di media lunghezza
+            # Search for Channel Key (e.g. premium853) - or medium length alphanumeric string
             key_matches = re.finditer(r'["\']([a-z]+[0-9]+)["\']', iframe_content)
             for m in key_matches:
                 val = m.group(1)
-                # Filtro euristico: deve sembrare una chiave canale
+                # Heuristic filter: must look like a channel key
                 if re.match(r'^(premium|dad|sport|live)[0-9]+$', val):
                     params['channel_key'] = val
-                    logger.info(f"✅ Trovata possibile Channel Key: {val}")
+                    logger.info(f"✅ Found possible Channel Key: {val}")
                     break
 
-            # Prova a estrarre secret_key anche con estrazione euristica
+            # Try to extract secret_key also with heuristic extraction
             if params.get('channel_key'):
                 secret_key = self._extract_secret_key(iframe_content, params['channel_key'])
                 if secret_key:
-                    logger.info(f"✅ Secret key estratta (fallback)")
+                    logger.info(f"✅ Secret key extracted (fallback)")
 
-        # Cerca Country (2 lettere maiuscole)
+        # Search for Country (2 uppercase letters)
         country_match = re.search(r'["\']([A-Z]{2})["\']', iframe_content)
         if country_match:
             params['auth_country'] = country_match.group(1)
         else:
             params['auth_country'] = 'DE'  # Fallback
 
-        # Cerca Timestamp (10 cifre)
+        # Search for Timestamp (10 digits)
         ts_matches = re.findall(r'["\']([0-9]{10})["\']', iframe_content)
         if ts_matches:
             ts_values = sorted([int(x) for x in ts_matches])
@@ -859,11 +800,11 @@ class DLHDExtractor:
             else:
                 params['auth_expiry'] = str(ts_values[0] + 3600)
 
-        # Validazione minima
+        # Minimal validation
         if not params.get('auth_token'):
             raise ExtractorError("Unable to extract JWT from new flow.")
 
-        # Se manca channel key, prova a estrarla dall'URL
+        # If channel key is missing, try to extract it from the URL
         channel_key = params.get('channel_key')
         if not channel_key:
             m_url = re.search(r'id=([0-9]+)', iframe_url)
@@ -900,22 +841,11 @@ class DLHDExtractor:
             "request_headers": stream_headers,
             "mediaflow_endpoint": self.mediaflow_endpoint,
             "expires_at": float(params.get('auth_expiry', 0)),
-            "secret_key": secret_key  # Incluso anche nel result per uso diretto
+            "secret_key": secret_key  # Included in result for direct use
         }
 
-    async def invalidate_cache_for_url(self, url: str):
-        """
-        Invalida la cache per un URL specifico.
-        Questa funzione viene chiamata da app.py quando rileva un errore (es. fallimento chiave AES).
-        """
-        channel_id = self.extract_channel_id(url)
-        if channel_id and channel_id in self._stream_data_cache:
-            del self._stream_data_cache[channel_id]
-            self._save_cache()
-            logger.info(f"🗑️ Cache for channel ID {channel_id} invalidated due to external error (e.g. AES key).")
-
     async def close(self):
-        """Chiude definitivamente la sessione"""
+        """Closes the session."""
         if self.session and not self.session.closed:
             try:
                 await self.session.close()
