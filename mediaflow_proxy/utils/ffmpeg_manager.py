@@ -96,14 +96,11 @@ class FFmpegManager:
             headers_str = "\r\n".join([f"{k}: {v}" for k, v in valid_headers.items()])
         
         cmd = [
-            "ffmpeg",
             "-hide_banner",
             "-loglevel", "warning",
-            "-fflags", "+genpts+discardcorrupt+igndts",
-            "-analyzeduration", "5000000",
-            "-probesize", "5000000",
-            "-max_delay", "5000000", # Allow 5s of network jitter reordering
-            "-fpsprobesize", "0", # Don't wait to analyze FPS
+            "-fflags", "+genpts+discardcorrupt+igndts", 
+            "-analyzeduration", "10000000", 
+            "-probesize", "10000000",
             # --- Network resilience ---
             "-reconnect", "1",
             "-reconnect_streamed", "1",
@@ -154,6 +151,7 @@ class FFmpegManager:
         cmd.extend([
             "-bsf:v", "h264_mp4toannexb",
             "-bsf:a", "aac_adtstoasc", # Fix audio bitstream for TS
+            "-avoid_negative_ts", "make_zero", # Matches EasyProxy
             "-max_muxing_queue_size", "4096",
             "-f", "hls",
             "-hls_time", "4", # Standard 4s segments
