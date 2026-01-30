@@ -69,6 +69,9 @@ class Settings(BaseSettings):
 
     # FFmpeg Transcoding settings
     ffmpeg_remux: bool = False  # Whether to use FFmpeg remuxing for MPD streams.
+    ffmpeg_transcode: bool = True  # Whether to use FFmpeg transcoding (much more robust than remuxing).
+    ffmpeg_video_encoder: str = "libx264"  # The video encoder to use for FFmpeg transcoding.
+    ffmpeg_audio_encoder: str = "aac"  # The audio encoder to use for FFmpeg transcoding.
     ffmpeg_temp_dir: str = "temp_ffmpeg"  # Directory to store temporary HLS segments.
     ffmpeg_idle_timeout: int = 120  # Seconds of inactivity before terminating an idle FFmpeg stream.
 

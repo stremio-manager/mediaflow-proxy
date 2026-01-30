@@ -86,6 +86,7 @@ class FFmpegManager:
         os.makedirs(stream_dir, exist_ok=True)
         
         playlist_path = os.path.join(stream_dir, "index.m3u8")
+        ffmpeg_log_path = os.path.join(stream_dir, "ffmpeg.log")
         
         # Build command
         headers_str = ""
@@ -132,9 +133,29 @@ class FFmpegManager:
             except Exception as e:
                 logger.error(f"Error parsing clearkey: {e}")
 
+        cmd.extend(["-i", url])
+
+        if settings.ffmpeg_transcode:
+            # Full transcode for maximum compatibility (EasyProxy logic)
+            cmd.extend([
+                "-threads", "0",
+                "-vf", "scale=-2:720",  # Scale to 720p max height, keep aspect ratio
+                "-c:v", settings.ffmpeg_video_encoder,
+                "-preset", "ultrafast",
+                "-tune", "zerolatency",
+                "-crf", "28",
+                "-g", "30",
+                "-profile:v", "baseline",
+                "-c:a", settings.ffmpeg_audio_encoder,
+                "-b:a", "96k",
+                "-ac", "2",
+                "-ar", "44100",
+            ])
+        else:
+            # Stream copy (faster, less CPU, but less compatible)
+            cmd.extend(["-c", "copy"])
+
         cmd.extend([
-            "-i", url,
-            "-c", "copy",
             "-bsf:v", "h264_mp4toannexb",
             "-avoid_negative_ts", "make_zero",
             "-max_muxing_queue_size", "2048",
@@ -146,13 +167,20 @@ class FFmpegManager:
             playlist_path
         ])
         
-        logger.info(f"Starting FFmpeg for {stream_id} with key: {clearkey}")
+        logger.info(f"Starting FFmpeg for {stream_id} (Transcode: {settings.ffmpeg_transcode})")
         
         try:
+            # Write command to log for debugging
+            with open(ffmpeg_log_path, "w") as log_file:
+                log_file.write(f"Command: {' '.join(cmd)}\n\n")
+            
+            # Open log file in append mode for stderr/stdout
+            log_handle = open(ffmpeg_log_path, "a")
+
             process = await asyncio.create_subprocess_exec(
                 *cmd,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+                stdout=log_handle,
+                stderr=log_handle
             )
 
             self.processes[stream_id] = process
@@ -161,13 +189,18 @@ class FFmpegManager:
             # Wait for the playlist to appear (up to 30 seconds)
             for _ in range(300):
                 if os.path.exists(playlist_path):
+                    log_handle.close()
                     break
                 # Check if process died
                 if process.returncode is not None:
-                    stdout, stderr = await process.communicate()
-                    logger.error(f"FFmpeg process died. Stderr: {stderr.decode()[:500]}")
+                    log_handle.close()
+                    with open(ffmpeg_log_path, "r") as f:
+                        log_content = f.read()
+                    logger.error(f"FFmpeg process died. Log tail: {log_content[-500:]}")
                     return None
                 await asyncio.sleep(0.1)
+            else:
+                log_handle.close()
             
             if not os.path.exists(playlist_path):
                  logger.error("Timeout waiting for playlist generation")
