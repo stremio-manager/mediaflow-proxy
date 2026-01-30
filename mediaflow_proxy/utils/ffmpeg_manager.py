@@ -99,8 +99,11 @@ class FFmpegManager:
             "ffmpeg",
             "-hide_banner",
             "-loglevel", "warning",
+            "-fflags", "+genpts+discardcorrupt+igndts",
             "-analyzeduration", "5000000",
             "-probesize", "5000000",
+            "-max_delay", "5000000", # Allow 5s of network jitter reordering
+            "-fpsprobesize", "0", # Don't wait to analyze FPS
             # --- Network resilience ---
             "-reconnect", "1",
             "-reconnect_streamed", "1",
