@@ -159,33 +159,32 @@ class DLHDExtractor:
             async with session.get(url, ssl=False, timeout=ClientTimeout(total=10)) as response:
                 if response.status == 200:
                     text = await response.text()
-                    # ✅ Parsing con supporto per configurazione completa
+                    # Parsing with support for complete configuration
                     lines = [line.strip() for line in text.splitlines() if line.strip()]
                     new_hosts = []
                     
                     for line in lines:
                         if line.startswith('#AUTH_URL:'):
                             self.auth_url = line.replace('#AUTH_URL:', '').strip()
-                            logger.info(f"✅ Auth URL aggiornato: {self.auth_url}")
+                            logger.info(f"✅ Auth URL updated: {self.auth_url}")
                         elif line.startswith('#STREAM_CDN_TEMPLATE:'):
                             self.stream_cdn_template = line.replace('#STREAM_CDN_TEMPLATE:', '').strip()
-                            logger.info(f"✅ Stream CDN Template aggiornato: {self.stream_cdn_template}")
+                            logger.info(f"✅ Stream CDN Template updated: {self.stream_cdn_template}")
                         elif line.startswith('#STREAM_OTHER_TEMPLATE:'):
                             self.stream_other_template = line.replace('#STREAM_OTHER_TEMPLATE:', '').strip()
-                            logger.info(f"✅ Stream Other Template aggiornato: {self.stream_other_template}")
+                            logger.info(f"✅ Stream Other Template updated: {self.stream_other_template}")
                         elif line.startswith('#SERVER_LOOKUP_URL:'):
                             self.server_lookup_url = line.replace('#SERVER_LOOKUP_URL:', '').strip()
-                            logger.info(f"✅ Server Lookup URL aggiornato: {self.server_lookup_url}")
+                            logger.info(f"✅ Server Lookup URL updated: {self.server_lookup_url}")
                         elif line.startswith('#BASE_DOMAIN:'):
                             self.base_domain = line.replace('#BASE_DOMAIN:', '').strip()
-                            logger.info(f"✅ Base Domain aggiornato: {self.base_domain}")
+                            logger.info(f"✅ Base Domain updated: {self.base_domain}")
                         elif not line.startswith('#'):
                             new_hosts.append(line)
                     
                     if new_hosts:
                         self.iframe_hosts = new_hosts
                         logger.info(f"✅ Host list updated: {self.iframe_hosts}")
-                        self._save_cache()
                         return True
                     else:
                          logger.warning("⚠️ Host list downloaded but empty.")
@@ -197,11 +196,11 @@ class DLHDExtractor:
         return False
 
     def _get_headers_for_url(self, url: str, base_headers: dict) -> dict:
-        """Applica headers specifici per il dominio stream automaticamente"""
+        """Apply specific headers for stream domain automatically."""
         headers = base_headers.copy()
         parsed_url = urlparse(url)
 
-        # Usa base_domain dinamico dal worker
+        # Use dynamic base_domain from worker
         stream_domain = self.base_domain
 
         if stream_domain in parsed_url.netloc:
