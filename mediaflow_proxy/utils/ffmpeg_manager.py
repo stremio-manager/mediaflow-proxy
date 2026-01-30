@@ -96,6 +96,7 @@ class FFmpegManager:
             headers_str = "\r\n".join([f"{k}: {v}" for k, v in valid_headers.items()])
         
         cmd = [
+            "ffmpeg",
             "-hide_banner",
             "-loglevel", "warning",
             "-fflags", "+genpts+discardcorrupt+igndts", 
