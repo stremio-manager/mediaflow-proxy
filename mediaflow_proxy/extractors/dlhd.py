@@ -216,30 +216,23 @@ class DLHDExtractor(BaseExtractor):
             logger.error(f"Error updating iframe host: {e}")
         return False
 
-    def _extract_secret_key(self, iframe_html: str, channel_key: str | None = None) -> Optional[str]:
-        # Step 1: Find the nonce calculation block to identify the secret variable name
-        # Pattern: CryptoJS.HmacSHA256(resource,_SECRET_VAR).toString()
+    def _extract_secret_key(self, iframe_html: str, channel_key: str = None) -> Optional[str]:
         hmac_pattern = r'CryptoJS\.HmacSHA256\(resource,\s*([a-zA-Z_$][\w$]*)\)'
         hmac_match = re.search(hmac_pattern, iframe_html)
-
         if not hmac_match:
-            # Fallback: try finding HMAC with a variable in any context
             hmac_pattern_general = r'HmacSHA256\([^,]+,\s*([a-zA-Z_$][\w$]*)\)'
             hmac_match = re.search(hmac_pattern_general, iframe_html)
-
+        
         if not hmac_match:
             return None
 
         secret_var_name = hmac_match.group(1)
-
-        # Step 2: Find the line containing "let _varname=" or "const _varname="
-        const_pattern = rf'(?:let|const)\s+{re.escape(secret_var_name)}\s*='
-        let_match = re.search(const_pattern, iframe_html)
-
+        # Try both 'let' and 'const' patterns
+        let_pattern = rf'(?:let|const)\s+{re.escape(secret_var_name)}\s*='
+        let_match = re.search(let_pattern, iframe_html)
         if not let_match:
             return None
 
-        # Get the line containing the variable definition
         line_start = let_match.start()
         while line_start > 0 and iframe_html[line_start - 1] not in '\n\r':
             line_start -= 1
@@ -250,8 +243,6 @@ class DLHDExtractor(BaseExtractor):
             if line_end == -1: line_end = len(iframe_html)
             
         line_content = iframe_html[line_start:line_end + 1]
-        
-        # Extract quoted base64 strings
         base64_parts = re.findall(r'\"([A-Za-z0-9+/=]+)\"', line_content)
         if not base64_parts:
             return None
@@ -482,12 +473,10 @@ class DLHDExtractor(BaseExtractor):
                     stream_url = self._build_stream_url(server_key, params['channel_key'])
                     stream_headers = self._build_stream_headers(iframe_url, params['channel_key'], params['auth_token'])
                     
-                    # Ensure cookies from the session are passed to the stream headers
                     cookies = session.cookie_jar.filter_cookies(stream_url)
                     cookie_str = "; ".join([f"{k}={v.value}" for k, v in cookies.items()])
                     if cookie_str:
                         stream_headers['Cookie'] = cookie_str
-                        logger.info(f"Adding cookies to stream headers: {cookie_str[:50]}...")
                         
                     return {
                         "destination_url": stream_url,

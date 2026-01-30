@@ -26,11 +26,10 @@ def process_entry(entry_lines: list[str], base_url: str, api_password: Optional[
     headers = {}
     kodi_props = {}
     url_indices = []
-    processed_lines = []
-    
+    processed_lines = list(entry_lines)
+
     # Primo passaggio: analizza tutti i tag e trova l'URL (o gli URL)
-    # Rimuoviamo KODIPROP dalla lista finale man mano che li processiamo
-    for idx, line in enumerate(entry_lines):
+    for idx, line in enumerate(processed_lines):
         logical_line = line.strip()
         if not logical_line:
             continue
@@ -47,28 +46,24 @@ def process_entry(entry_lines: list[str], base_url: str, api_password: Optional[
                     elif k.startswith("http-"):
                         headers[k[len("http-") :]] = v
             except Exception: pass
-            processed_lines.append(line) # Keep for now, user might want them? Or should we remove?
         elif logical_line.startswith("#EXTHTTP:"):
             try:
                 headers.update(json.loads(logical_line.split(":", 1)[1]))
             except Exception: pass
-            # Removed from output
         elif logical_line.startswith("#KODIPROP:"):
+            # Mark this line for removal as we will consume it
+            processed_lines[idx] = None 
             try:
                 prop = logical_line.split(":", 1)[1]
                 if "=" in prop:
                     pk, pv = prop.split("=", 1)
                     kodi_props[pk.strip()] = pv.strip()
             except Exception: pass
-            # Removed from output since we consume it
         elif logical_line.startswith("http") and not logical_line.startswith("#"):
-            url_indices.append(len(processed_lines))
-            processed_lines.append(line)
-        else:
-            processed_lines.append(line)
+            url_indices.append(idx)
 
     if not url_indices:
-        return entry_lines
+        return processed_lines
 
     # Secondo passaggio: riscrivi l'URL (prendiamo il primo URL trovato nell'entry)
     u_idx = url_indices[0]
@@ -118,7 +113,8 @@ def process_entry(entry_lines: list[str], base_url: str, api_password: Optional[
         processed_url += f"&api_password={api_password}"
 
     processed_lines[u_idx] = processed_url + "\n"
-    return processed_lines
+    # Filter out lines marked for removal (None)
+    return [line for line in processed_lines if line is not None]
 
 
 def rewrite_m3u_links_streaming(
