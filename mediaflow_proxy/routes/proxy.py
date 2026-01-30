@@ -362,7 +362,7 @@ async def hls_key_proxy(
 
 # Map file extensions to MIME types for HLS segments
 HLS_SEGMENT_MIME_TYPES = {
-    "ts": "video/mp2t",  # MPEG-TS (traditional HLS)
+    "ts": "video/MP2T",  # MPEG-TS (traditional HLS)
     "m4s": "video/mp4",  # fMP4 segment (modern HLS/CMAF)
     "mp4": "video/mp4",  # fMP4 segment (alternative extension)
     "m4a": "audio/mp4",  # Audio-only fMP4 segment
@@ -440,6 +440,8 @@ async def hls_segment_proxy(
                 "content-type": mime_type,
                 "cache-control": "public, max-age=3600",
                 "access-control-allow-origin": "*",
+                "access-control-expose-headers": "Content-Length, Content-Type, Content-Range, Accept-Ranges, Date",
+                "accept-ranges": "bytes",
             }
             response_headers = apply_header_manipulation(base_headers, proxy_headers)
             return Response(content=segment_data, media_type=mime_type, headers=response_headers)

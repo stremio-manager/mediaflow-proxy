@@ -297,6 +297,15 @@ def prepare_response_headers(
     if propagate_headers:
         response_headers.update(propagate_headers)
     response_headers.update(proxy_response_headers)
+
+    # Add mandatory ExoPlayer/CORS headers
+    response_headers["access-control-allow-origin"] = "*"
+    response_headers["access-control-expose-headers"] = "Content-Length, Content-Type, Content-Range, Accept-Ranges, Date"
+    
+    # Ensure accept-ranges is set to bytes if not already present, as ExoPlayer expects this for segments
+    if "accept-ranges" not in response_headers:
+        response_headers["accept-ranges"] = "bytes"
+
     return response_headers
 
 
@@ -369,6 +378,8 @@ async def fetch_and_process_m3u8(
             "content-disposition": "inline",
             "accept-ranges": "none",
             "content-type": "application/vnd.apple.mpegurl",
+            "access-control-allow-origin": "*",
+            "access-control-expose-headers": "Content-Length, Content-Type, Date",
         }
         # Don't include propagate headers for manifests - they should only apply to segments
         response_headers = apply_header_manipulation(base_headers, proxy_headers, include_propagate=False)

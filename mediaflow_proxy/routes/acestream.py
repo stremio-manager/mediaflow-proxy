@@ -242,7 +242,7 @@ async def acestream_hls_manifest(
 
 # Map file extensions to MIME types for segments
 SEGMENT_MIME_TYPES = {
-    "ts": "video/mp2t",
+    "ts": "video/MP2T",
     "m4s": "video/mp4",
     "mp4": "video/mp4",
     "m4a": "audio/mp4",
@@ -393,7 +393,7 @@ async def acestream_ts_stream(
             await streamer.create_streaming_response(ts_url, proxy_headers.request)
 
             base_headers = {
-                "content-type": "video/mp2t",
+                "content-type": "video/MP2T",
                 "transfer-encoding": "chunked",
                 "cache-control": "no-cache, no-store, must-revalidate",
                 "access-control-allow-origin": "*",

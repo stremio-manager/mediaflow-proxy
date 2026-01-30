@@ -158,7 +158,12 @@ async def process_segment(
     if settings.remux_to_ts and ("video" in mimetype or "audio" in mimetype):
         remuxed_content = await remux_to_ts(decrypted_content)
         if remuxed_content:
-             return Response(content=remuxed_content, media_type="video/MP2T", headers=apply_header_manipulation({}, proxy_headers))
+             base_headers = {
+                 "access-control-allow-origin": "*",
+                 "access-control-expose-headers": "Content-Length, Content-Type, Date",
+                 "accept-ranges": "bytes",
+             }
+             return Response(content=remuxed_content, media_type="video/MP2T", headers=apply_header_manipulation(base_headers, proxy_headers))
         else:
              # Fallback: serve fMP4 if remux fails
              logger.warning("FFmpeg remux failed, serving raw fMP4")
