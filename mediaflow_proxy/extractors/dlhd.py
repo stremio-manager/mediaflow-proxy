@@ -44,6 +44,14 @@ class DLHDExtractor:
         r'daddyhd\.php\?id=(\d+)',
     ]
 
+    # Shared configuration (Class-level) - No longer dynamically fetched
+    _iframe_hosts = ['codepcplay.fun']
+    _auth_url = 'https://security.dvalna.ru/auth2.php'
+    _stream_cdn_template = 'https://top1.dvalna.ru/top1/cdn/{CHANNEL}/mono.css'
+    _stream_other_template = 'https://{SERVER_KEY}new.dvalna.ru/{SERVER_KEY}/{CHANNEL}/mono.css'
+    _server_lookup_url = 'https://chevy.dvalna.ru/server_lookup'
+    _base_domain = 'dvalna.ru'
+
     def __init__(self, request_headers: dict, proxies: list = None):
         self.request_headers = request_headers
         self.base_headers = {
@@ -53,16 +61,6 @@ class DLHDExtractor:
         self.mediaflow_endpoint = "hls_manifest_proxy"
         self._session_lock = asyncio.Lock()
         self.proxies = proxies or []
-        
-        # Iframe host list (will be fetched dynamically)
-        self.iframe_hosts = []
-
-        # Server configuration with defaults
-        self.auth_url = 'https://security.kiko2.ru/auth2.php'
-        self.stream_cdn_template = 'https://top1.kiko2.ru/top1/cdn/{CHANNEL}/mono.css'
-        self.stream_other_template = 'https://{SERVER_KEY}new.kiko2.ru/{SERVER_KEY}/{CHANNEL}/mono.css'
-        self.server_lookup_url = 'https://chevy.kiko2.ru/server_lookup'
-        self.base_domain = 'kiko2.ru'
         
         logger.debug("DLHD Extractor initialized")
 
@@ -107,9 +105,9 @@ class DLHDExtractor:
     def _build_stream_url(self, server_key: str, channel_key: str) -> str:
         """Build stream URL using server key and channel key."""
         if server_key == 'top1/cdn':
-            return self.stream_cdn_template.replace('{CHANNEL}', channel_key)
+            return self._stream_cdn_template.replace('{CHANNEL}', channel_key)
         else:
-            return self.stream_other_template.replace('{SERVER_KEY}', server_key).replace('{CHANNEL}', channel_key)
+            return self._stream_other_template.replace('{SERVER_KEY}', server_key).replace('{CHANNEL}', channel_key)
 
     def _build_stream_headers(self, iframe_url: str, channel_key: str, auth_token: str, secret_key: str = None) -> dict:
         """Build standard stream headers."""
@@ -128,7 +126,7 @@ class DLHDExtractor:
 
     async def _fetch_server_key(self, channel_key: str, iframe_url: str) -> str:
         """Fetch server key for a given channel."""
-        server_lookup_url = f"{self.server_lookup_url}?channel_id={channel_key}"
+        server_lookup_url = f"{self._server_lookup_url}?channel_id={channel_key}"
         iframe_origin = f"https://{urlparse(iframe_url).netloc}"
         lookup_headers = {
             'User-Agent': self.USER_AGENT,
@@ -143,53 +141,7 @@ class DLHDExtractor:
             raise ExtractorError(f"No server_key in response: {server_data}")
         return server_key
 
-    async def _fetch_iframe_hosts(self) -> bool:
-        """Fetch updated iframe host list."""
-        # Obfuscated URL to avoid static scraping
-        encoded_url = "aHR0cHM6Ly9pZnJhbWUuZGxoZC5kcGRucy5vcmcv"
-        url = base64.b64decode(encoded_url).decode('utf-8')
-        
-        logger.info(f"🔄 Updating iframe host list...")
-        try:
-            session = await self._get_session()
-            async with session.get(url, ssl=False, timeout=ClientTimeout(total=10)) as response:
-                if response.status == 200:
-                    text = await response.text()
-                    # Parsing with support for complete configuration
-                    lines = [line.strip() for line in text.splitlines() if line.strip()]
-                    new_hosts = []
-                    
-                    for line in lines:
-                        if line.startswith('#AUTH_URL:'):
-                            self.auth_url = line.replace('#AUTH_URL:', '').strip()
-                            logger.info(f"✅ Auth URL updated: {self.auth_url}")
-                        elif line.startswith('#STREAM_CDN_TEMPLATE:'):
-                            self.stream_cdn_template = line.replace('#STREAM_CDN_TEMPLATE:', '').strip()
-                            logger.info(f"✅ Stream CDN Template updated: {self.stream_cdn_template}")
-                        elif line.startswith('#STREAM_OTHER_TEMPLATE:'):
-                            self.stream_other_template = line.replace('#STREAM_OTHER_TEMPLATE:', '').strip()
-                            logger.info(f"✅ Stream Other Template updated: {self.stream_other_template}")
-                        elif line.startswith('#SERVER_LOOKUP_URL:'):
-                            self.server_lookup_url = line.replace('#SERVER_LOOKUP_URL:', '').strip()
-                            logger.info(f"✅ Server Lookup URL updated: {self.server_lookup_url}")
-                        elif line.startswith('#BASE_DOMAIN:'):
-                            self.base_domain = line.replace('#BASE_DOMAIN:', '').strip()
-                            logger.info(f"✅ Base Domain updated: {self.base_domain}")
-                        elif not line.startswith('#'):
-                            new_hosts.append(line)
-                    
-                    if new_hosts:
-                        self.iframe_hosts = new_hosts
-                        logger.info(f"✅ Host list updated: {self.iframe_hosts}")
-                        return True
-                    else:
-                         logger.warning("⚠️ Host list downloaded but empty.")
-                else:
-                    logger.error(f"❌ HTTP error {response.status} while updating iframe host.")
-        except Exception as e:
-            logger.error(f"❌ Exception while updating iframe host: {e}")
-        
-        return False
+
 
     def _get_headers_for_url(self, url: str, base_headers: dict) -> dict:
         """Apply specific headers for stream domain automatically."""
@@ -197,7 +149,7 @@ class DLHDExtractor:
         parsed_url = urlparse(url)
 
         # Use dynamic base_domain from worker
-        stream_domain = self.base_domain
+        stream_domain = self._base_domain
 
         if stream_domain in parsed_url.netloc:
             origin = f"{parsed_url.scheme}://{parsed_url.netloc}"
@@ -325,7 +277,7 @@ class DLHDExtractor:
 
     async def extract(self, url: str, force_refresh: bool = False, **kwargs) -> Dict[str, Any]:
         """Main extraction flow: extracts directly from iframe."""
-        
+
         async def get_stream_data_direct(channel_id: str, hosts_to_try: list) -> Dict[str, Any]:
             """Direct extraction from iframe without going through main page."""
             last_error = None
@@ -382,8 +334,8 @@ class DLHDExtractor:
                     logger.info(f"✅ Parameters extracted: channel_key={params['channel_key']}")
                     
                     # Step 3: Auth POST
-                    # ✅ DINAMICO: usa self.auth_url completo
-                    auth_url = self.auth_url
+                    # ✅ DINAMICO: usa self._auth_url completo
+                    auth_url = self._auth_url
                     logger.info(f"🔐 Using auth_url: {auth_url}")
                     iframe_origin = f"https://{iframe_host}"
                     
@@ -417,15 +369,6 @@ class DLHDExtractor:
                         if auth_resp.status != 200 or 'Blocked' in auth_text or 'bad params' in auth_text.lower():
                             logger.warning(f"⚠️ Auth bloccato da {iframe_host}: {auth_text[:50]}")
                             
-                            
-                            # ✅ NUOVO: Se è il primo host e auth fallisce, prova a refreshare config
-                            if iframe_host == hosts_to_try[0] and not getattr(self, '_config_refreshed', False):
-                                logger.info("🔄 Auth fallito, provo ad aggiornare config dal worker...")
-                                self._config_refreshed = True
-                                if await self._fetch_iframe_hosts():
-                                    # Aggiorna auth_url per il prossimo tentativo
-                                    auth_url = self.auth_url
-                                    logger.info(f"✅ Config aggiornata, nuovo auth_url: {auth_url}")
                             
                             # ✅ TENTATIVO NUOVO FLUSSO se Auth fallisce (es. token invalidi)
                             logger.warning("⚠️ Auth fallito con metodo standard. Tento nuovo flusso euristico...")
@@ -519,15 +462,9 @@ class DLHDExtractor:
 
             # Proceed with direct extraction
             try:
-                result = await get_stream_data_direct(channel_id, self.iframe_hosts)
+                result = await get_stream_data_direct(channel_id, self._iframe_hosts)
             except ExtractorError:
-                # If current hosts fail, try updating them
-                logger.warning("⚠️ All current hosts failed. Attempting to update host list...")
-                if await self._fetch_iframe_hosts():
-                     logger.info(f"🔄 Retrying with new hosts: {self.iframe_hosts}")
-                     result = await get_stream_data_direct(channel_id, self.iframe_hosts)
-                else:
-                    raise
+                raise
             
             return result
             
