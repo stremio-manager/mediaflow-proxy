@@ -168,6 +168,7 @@ async def remux_to_ts(content: bytes) -> Optional[bytes]:
     Matches EasyProxy's _remux_to_ts implementation.
     """
     try:
+        logger.info(f"Starting FFmpeg segment remux, input size: {len(content)} bytes")
         cmd = [
             'ffmpeg',
             '-y',
@@ -192,13 +193,18 @@ async def remux_to_ts(content: bytes) -> Optional[bytes]:
         stdout, stderr = await proc.communicate(input=content)
         
         if len(stdout) > 0:
+            logger.info(f"FFmpeg segment remux SUCCESS, output size: {len(stdout)} bytes")
             return stdout
         
         if proc.returncode != 0:
-            logger.error(f"FFmpeg segment remux failed: {stderr.decode()}")
+            logger.error(f"FFmpeg segment remux failed (code {proc.returncode}): {stderr.decode()}")
             return None
             
+        logger.warning(f"FFmpeg segment remux returned empty output")
         return stdout
+    except FileNotFoundError:
+        logger.error("FFmpeg not found! Is it installed?")
+        return None
     except Exception as e:
         logger.error(f"Segment remux error: {e}")
         return None
