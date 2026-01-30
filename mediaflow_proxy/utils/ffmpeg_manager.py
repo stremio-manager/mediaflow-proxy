@@ -100,7 +100,7 @@ class FFmpegManager:
             "-hide_banner",
             "-loglevel", "warning",
             # --- CRITICAL: Timestamp and sync fixes ---
-            "-fflags", "+genpts+discardcorrupt+igndts+sortdts",
+            "-fflags", "+genpts+discardcorrupt+igndts",
             "-analyzeduration", "20000000",
             "-probesize", "20000000",
             # --- Network resilience ---
@@ -150,8 +150,10 @@ class FFmpegManager:
         # But we need to be careful if the source is HEVC or others
         cmd.extend([
             "-bsf:v", "h264_mp4toannexb",
+            "-bsf:a", "aac_adtstoasc", # Fix audio bitstream for TS
             "-avoid_negative_ts", "make_zero",
             "-max_muxing_queue_size", "4096",
+            "-max_interleave_delta", "0", # Allow unlimited drift buffering
             "-f", "hls",
             "-hls_time", "2",
             "-hls_list_size", "15",
