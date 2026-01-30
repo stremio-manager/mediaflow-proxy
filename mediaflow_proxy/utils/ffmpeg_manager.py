@@ -160,7 +160,7 @@ class FFmpegManager:
             playlist_path
         ])
         
-        logger.info(f"Starting FFmpeg for {stream_id} (Transcode: {settings.ffmpeg_transcode})")
+        logger.info(f"Starting FFmpeg for {stream_id}")
         
         try:
             # Write command to log for debugging
