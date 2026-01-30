@@ -132,6 +132,9 @@ class FFmpegManager:
                     logger.info(f"Added {len(keys_to_use)} decryption key(s) to FFmpeg command")
             except Exception as e:
                 logger.error(f"Error parsing clearkey: {e}")
+        
+        # Use wallclock timestamps to prevent jumps due to source timestamp resets/loops
+        cmd.extend(["-use_wallclock_as_timestamps", "1"])
         cmd.extend(["-i", url])
 
         # Explicit mapping to ensure video is selected
