@@ -46,10 +46,21 @@ async def check_and_extract_dlhd_stream(
     """
     # Check for common DLHD/DaddyLive patterns in the URL
     # This includes stream-XXX pattern and domain names like dlhd.dad or daddylive.sx
+    netloc = urlparse(destination).netloc.lower()
     is_dlhd_link = (
         re.search(r"stream-\d+", destination)
-        or "dlhd.dad" in urlparse(destination).netloc
-        or "daddylive.sx" in urlparse(destination).netloc
+        or any(
+            domain in netloc
+            for domain in [
+                "dlhd.dad",
+                "daddylive",
+                "daddyhd.com",
+                "daddylive.voto",
+                "daddylive.sx",
+                "daddylive.it",
+                "daddytv.live",
+            ]
+        )
     )
 
     if not is_dlhd_link:
