@@ -300,18 +300,18 @@ class DLHDExtractor(BaseExtractor):
         return None
 
     async def _extract_new_auth_flow(self, iframe_url: str, iframe_content: str) -> Dict[str, Any]:
-        logger.info("Tentativo rilevamento nuovo flusso auth obfuscated...")
+        logger.info("Attempting new obfuscated auth flow detection...")
         obfuscated_data = self._extract_obfuscated_session_data(iframe_content)
         params = {}
         secret_key = None
 
         if obfuscated_data:
-            logger.info("✅ Rilevato pattern obfuscated (var_xxx)")
+            logger.info("✅ Detected obfuscated pattern (var_xxx)")
             params['auth_token'] = obfuscated_data.get('session_token')
             params['channel_key'] = obfuscated_data.get('channel_key')
             secret_key = obfuscated_data.get('secret_key')
         else:
-            logger.info("Pattern obfuscated non trovato, provo estrazione euristica...")
+            logger.info("Obfuscated pattern not found, trying heuristic extraction...")
             jwt_match = re.search(r'["\'](eyJ[a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+)["\']', iframe_content)
             if jwt_match:
                 params['auth_token'] = jwt_match.group(1)
