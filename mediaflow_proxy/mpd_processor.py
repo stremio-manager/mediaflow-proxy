@@ -408,7 +408,8 @@ def build_hls_playlist(
     skip_filter = SkipSegmentFilter(skip_segments) if skip_segments else None
 
     # Use EXT-X-MAP for live streams to avoid duplicate moov atoms
-    use_map = is_live
+    # FORCE FALSE for Legacy Mode: MPEG-TS remuxing requires self-contained segments (no external init)
+    use_map = False # was: is_live
 
     proxy_url = request.url_for("segment_endpoint")
     proxy_url = str(proxy_url.replace(scheme=get_original_scheme(request)))
