@@ -133,8 +133,8 @@ async def handle_hls_stream_proxy(
             )
 
         parsed_url = urlparse(hls_params.destination)
-        # Check if the URL is a valid m3u8 playlist or m3u file
-        if parsed_url.path.endswith((".m3u", ".m3u8", ".m3u_plus")) or parse_qs(parsed_url.query).get("type", [""])[
+        # Check if the URL is a valid m3u8 playlist or m3u file (including .css used by DLHD)
+        if parsed_url.path.endswith((".m3u", ".m3u8", ".m3u_plus", ".css")) or parse_qs(parsed_url.query).get("type", [""])[
             0
         ] in ["m3u", "m3u8", "m3u_plus"]:
             return await fetch_and_process_m3u8(

@@ -7,6 +7,7 @@ and Sportsonline/Sportzonline streams that are auto-detected in proxy routes.
 
 import logging
 import re
+import time
 from urllib.parse import urlparse
 
 from fastapi import Request, HTTPException
@@ -17,6 +18,11 @@ from mediaflow_proxy.utils.http_utils import ProxyRequestHeaders, DownloadError
 
 
 logger = logging.getLogger(__name__)
+
+# Silent extraction cache: {url: {"data": result, "timestamp": time}}
+_extraction_cache: dict = {}
+_cache_duration = 300  # 5 minutes
+
 
 
 async def check_and_extract_dlhd_stream(
@@ -57,6 +63,12 @@ async def check_and_extract_dlhd_stream(
 
     logger.info(f"DLHD link detected: {destination}")
 
+    # Silent cache check
+    if not force_refresh and destination in _extraction_cache:
+        cached = _extraction_cache[destination]
+        if time.time() - cached["timestamp"] < _cache_duration:
+            return cached["data"]
+
     # Extract stream data
     extractor = None
     try:
@@ -65,6 +77,9 @@ async def check_and_extract_dlhd_stream(
         result = await extractor.extract(destination)
 
         logger.info(f"DLHD extraction successful. Stream URL: {result.get('destination_url')}")
+        
+        # Silent cache storage
+        _extraction_cache[destination] = {"data": result, "timestamp": time.time()}
 
         return result
 
@@ -101,6 +116,12 @@ async def check_and_extract_sportsonline_stream(
         return None
 
     logger.info(f"Sportsonline link detected: {destination}")
+    
+    # Silent cache check
+    if not force_refresh and destination in _extraction_cache:
+        cached = _extraction_cache[destination]
+        if time.time() - cached["timestamp"] < _cache_duration:
+            return cached["data"]
 
     extractor = None
     try:
@@ -108,6 +129,10 @@ async def check_and_extract_sportsonline_stream(
         extractor = ExtractorFactory.get_extractor("Sportsonline", proxy_headers.request)
         result = await extractor.extract(destination)
         logger.info(f"Sportsonline extraction successful. Stream URL: {result.get('destination_url')}")
+        
+        # Silent cache storage
+        _extraction_cache[destination] = {"data": result, "timestamp": time.time()}
+
         return result
     except (ExtractorError, DownloadError) as e:
         logger.error(f"Sportsonline extraction failed: {str(e)}")
