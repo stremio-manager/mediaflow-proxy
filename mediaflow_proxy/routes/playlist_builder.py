@@ -89,9 +89,9 @@ def rewrite_m3u_links_streaming(
             and not logical_line.startswith("#")
             and ("http://" in logical_line or "https://" in logical_line)
         ):
-            processed_url_content = logical_line
+            # Determine the base proxy URL
+            manifest_type = current_kodi_props.get("inputstream.adaptive.manifest_type", "").lower()
 
-            # Non modificare link pluto.tv
             if "pluto.tv" in logical_line:
                 processed_url_content = logical_line
             elif "vavoo.to" in logical_line:
@@ -100,25 +100,18 @@ def rewrite_m3u_links_streaming(
             elif "vixsrc.to" in logical_line:
                 encoded_url = urllib.parse.quote(logical_line, safe="")
                 processed_url_content = f"{base_url}/extractor/video?host=VixCloud&redirect_stream=true&d={encoded_url}&max_res=true&no_proxy=true"
-            elif ".m3u8" in logical_line:
-                encoded_url = urllib.parse.quote(logical_line, safe="")
-                processed_url_content = f"{base_url}/proxy/hls/manifest.m3u8?d={encoded_url}"
-            elif ".mpd" in logical_line:
-                # Estrai parametri DRM dall'URL MPD se presenti (es. &key_id=...&key=...)
+            elif manifest_type == "mpd" or ".mpd" in logical_line:
+                # Extract DRM parameters from MPD URL if present
                 from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 
-                # Parse dell'URL per estrarre parametri
                 parsed_url = urlparse(logical_line)
                 query_params = parse_qs(parsed_url.query)
 
-                # Estrai key_id e key se presenti nei parametri della query
                 key_id = query_params.get("key_id", [None])[0]
                 key = query_params.get("key", [None])[0]
 
-                # Rimuovi key_id e key dai parametri originali
+                # Remove DRM params from original URL
                 clean_query_params = {k: v for k, v in query_params.items() if k not in ["key_id", "key"]}
-
-                # Ricostruisci l'URL senza i parametri DRM
                 clean_query = urlencode(clean_query_params, doseq=True)
                 clean_url = urlunparse(
                     (
@@ -127,36 +120,33 @@ def rewrite_m3u_links_streaming(
                         parsed_url.path,
                         parsed_url.params,
                         clean_query,
-                        "",  # Rimuovi il frammento per evitare problemi
+                        "",
                     )
                 )
 
-                # Codifica l'URL pulito per il parametro 'd'
                 encoded_clean_url = urllib.parse.quote(clean_url, safe="")
-
-                # Costruisci l'URL MediaFlow con parametri DRM separati
                 processed_url_content = f"{base_url}/proxy/mpd/manifest.m3u8?d={encoded_clean_url}"
 
-                # Aggiungi i parametri DRM all'URL di MediaFlow se sono stati trovati
                 if key_id:
                     processed_url_content += f"&key_id={key_id}"
                 if key:
                     processed_url_content += f"&key={key}"
-
-            # Aggiungi chiavi da #KODIPROP se presenti
-            license_key = current_kodi_props.get("inputstream.adaptive.license_key")
-            if license_key and ":" in license_key:
-                key_id_kodi, key_kodi = license_key.split(":", 1)
-                processed_url_content += f"&key_id={key_id_kodi}"
-                processed_url_content += f"&key={key_kodi}"
-
-            elif ".php" in logical_line:
+            elif ".m3u8" in logical_line or ".php" in logical_line:
                 encoded_url = urllib.parse.quote(logical_line, safe="")
                 processed_url_content = f"{base_url}/proxy/hls/manifest.m3u8?d={encoded_url}"
             else:
-                # Per tutti gli altri link senza estensioni specifiche, trattali come .m3u8 con codifica
+                # Default fallback
                 encoded_url = urllib.parse.quote(logical_line, safe="")
                 processed_url_content = f"{base_url}/proxy/hls/manifest.m3u8?d={encoded_url}"
+
+            # Add keys from #KODIPROP if present
+            license_key = current_kodi_props.get("inputstream.adaptive.license_key")
+            if license_key and ":" in license_key:
+                key_id_kodi, key_kodi = license_key.split(":", 1)
+                if "&key_id=" not in processed_url_content:
+                    processed_url_content += f"&key_id={key_id_kodi}"
+                if "&key=" not in processed_url_content:
+                    processed_url_content += f"&key={key_kodi}"
 
             # Applica gli header raccolti prima di api_password
             if current_ext_headers:
