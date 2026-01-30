@@ -100,7 +100,7 @@ class FFmpegManager:
             "-hide_banner",
             "-loglevel", "warning",
             # --- CRITICAL: Timestamp and sync fixes ---
-            "-fflags", "+genpts+discardcorrupt+igndts",
+            "-fflags", "+genpts+discardcorrupt", # Removes igndts which can cause issues in copy mode
             "-analyzeduration", "10000000",
             "-probesize", "10000000",
             # --- Network resilience ---
@@ -141,8 +141,9 @@ class FFmpegManager:
         # Stream copy (faster, less CPU, but less compatible)
         cmd.extend([
             "-c", "copy",
-            # Ignore unknown stream types that might fail mapping
             "-ignore_unknown",
+            "-copyts", # Preserve original timestamps to prevent jumps
+            "-vsync", "passthrough", # Do not drop/duplicate frames
         ])
 
         # Bitstream filter determines compatibility for HLS/MPEG-TS
@@ -151,6 +152,7 @@ class FFmpegManager:
         cmd.extend([
             "-bsf:v", "h264_mp4toannexb",
             "-avoid_negative_ts", "make_zero",
+            "-start_at_zero", # Ensure HLS starts at 0
             "-max_muxing_queue_size", "2048",
             "-f", "hls",
             "-hls_time", "2",
