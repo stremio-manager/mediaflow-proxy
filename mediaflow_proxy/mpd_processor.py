@@ -101,7 +101,14 @@ async def process_playlist(
     if not matching_profiles:
         raise HTTPException(status_code=404, detail="Profile not found")
 
-    hls_content = build_hls_playlist(mpd_dict, matching_profiles, request, skip_segments, start_offset)
+    hls_content = build_hls_playlist(
+        mpd_dict,
+        matching_profiles,
+        request,
+        skip_segments,
+        manifest_type="dynamic" if mpd_dict.get("isLive") else "static",
+        max_duration=mpd_dict.get("maxSegmentDuration", 10.0),
+    )
 
     # Trigger prebuffering of upcoming segments for live streams
     if settings.enable_dash_prebuffer and mpd_dict.get("isLive", False):

@@ -244,7 +244,6 @@ async def handle_stream_request(
         response_headers = prepare_response_headers(
             streamer.response.headers, base_headers, proxy_headers.remove, proxy_headers.propagate
         )
-        )
         logger.debug(f"Prepared response headers: {response_headers}")
 
         # If we're removing content-range but upstream returned 206, change to 200
@@ -260,6 +259,7 @@ async def handle_stream_request(
             # For HEAD requests, just return the headers without streaming content
             await streamer.close()
             return Response(headers=response_headers, status_code=status_code)
+        else:
             # For GET requests, return the streaming response
             media_type = (
                 "application/x-mpegURL"
