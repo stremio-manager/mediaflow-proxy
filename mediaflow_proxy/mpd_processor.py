@@ -152,13 +152,14 @@ async def process_segment(
             # Concatenate init and segment content
             decrypted_content = init_content + segment_content
 
-    # --- LEGACY REMUXING (FFmpeg Segment Wrapper) ---
-    # Converts fMP4 to MPEG-TS to fix timestamp issues, matching EasyProxy Legacy Mode
-    # Both video and audio need to be remuxed to TS for player compatibility
-    if "video" in mimetype or "audio" in mimetype:
-        remuxed_content = await remux_to_ts(decrypted_content)
-        if remuxed_content:
-             return Response(content=remuxed_content, media_type="video/MP2T", headers=apply_header_manipulation({}, proxy_headers))
+    # --- LEGACY REMUXING DISABLED ---
+    # FFmpeg segment remuxing was causing sync issues with separate A/V tracks
+    # Returning decrypted content directly for now
+    # TODO: Investigate proper approach for MPD streams with separate adaptation sets
+    # if "video" in mimetype or "audio" in mimetype:
+    #     remuxed_content = await remux_to_ts(decrypted_content)
+    #     if remuxed_content:
+    #          return Response(content=remuxed_content, media_type="video/MP2T", headers=apply_header_manipulation({}, proxy_headers))
 
     response_headers = apply_header_manipulation({}, proxy_headers)
     return Response(content=decrypted_content, media_type=mimetype, headers=response_headers)
