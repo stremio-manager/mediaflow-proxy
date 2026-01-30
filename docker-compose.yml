@@ -1,6 +1,6 @@
 services:  
   mfp:
-    build: https://github.com/mhdzumair/mediaflow-proxy.git#main
+    build: .
     container_name: mfp
     restart: unless-stopped
     ports:
