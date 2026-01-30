@@ -100,7 +100,23 @@ class HybridCache:
 
     def _init_cache_dirs(self):
         """Initialize sharded cache directories."""
-        os.makedirs(self.cache_dir, exist_ok=True)
+        self.disabled = False
+        try:
+            os.makedirs(self.cache_dir, exist_ok=True)
+        except OSError as e:
+            if e.errno == 28: # No space
+                logger.warning(f"Disk full for cache {self.cache_dir}. Attempting cleanup...")
+                try:
+                    import shutil
+                    if self.cache_dir.exists():
+                        shutil.rmtree(self.cache_dir, ignore_errors=True)
+                    os.makedirs(self.cache_dir, exist_ok=True)
+                    return
+                except Exception as cleanup_e:
+                    logger.error(f"Cleanup failed: {cleanup_e}")
+            
+            logger.error(f"Failed to init cache dir {self.cache_dir}: {e}. Enabling memory-only mode.")
+            self.disabled = True
 
     def _get_md5_hash(self, key: str) -> str:
         """Get the MD5 hash of a cache key."""
@@ -126,6 +142,9 @@ class HybridCache:
         entry = self.memory_cache.get(key)
         if entry is not None:
             return entry.data
+
+        if getattr(self, "disabled", False):
+            return default
 
         # Try file cache
         try:
@@ -200,6 +219,10 @@ class HybridCache:
 
         # Update memory cache
         self.memory_cache.set(key, entry)
+        
+        if getattr(self, "disabled", False):
+            return True
+
         file_path = self._get_file_path(key)
         temp_path = file_path.with_suffix(".tmp")
 
