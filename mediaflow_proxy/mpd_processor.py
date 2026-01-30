@@ -179,12 +179,13 @@ async def remux_to_ts(content: bytes) -> Optional[bytes]:
             '-loglevel', 'error',
             '-y',
             '-i', 'pipe:0',
-            '-map', '0:v?',            # Map video if present
-            '-map', '0:a?',            # Map audio if present
+            '-map', '0',               # Map all streams from input
             '-c:v', 'copy',            # Copy video stream
             '-c:a', 'aac',             # Transcode audio to AAC for better sync in MPEG-TS
             '-b:a', '128k',            # Standard bitrate
-            '-avoid_negative_ts', 'make_zero', # Improve player compatibility
+            '-copyts',                 # Preserve original timestamps (CRITICAL for DASH)
+            '-mpegts_copyts', '1',     # Ensure TS packets use input timestamps
+            '-muxdelay', '0',          # Minimize latency
             '-bsf:v', 'h264_mp4toannexb',     # Ensure video is Annex B
             '-f', 'mpegts',
             'pipe:1'
