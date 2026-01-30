@@ -153,10 +153,9 @@ class FFmpegManager:
             "-bsf:a", "aac_adtstoasc", # Fix audio bitstream for TS
             "-avoid_negative_ts", "make_zero",
             "-max_muxing_queue_size", "4096",
-            "-max_interleave_delta", "0", # Allow unlimited drift buffering
             "-f", "hls",
-            "-hls_time", "2",
-            "-hls_list_size", "15",
+            "-hls_time", "6", # Increased to 6s to match typical source GOP sizes (prevents irregular segments)
+            "-hls_list_size", "10",
             "-hls_flags", "delete_segments+independent_segments",
             "-hls_segment_filename", os.path.join(stream_dir, "segment_%03d.ts"),
             playlist_path
