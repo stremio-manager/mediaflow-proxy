@@ -154,7 +154,8 @@ async def process_segment(
 
     # --- LEGACY REMUXING (FFmpeg Segment Wrapper) ---
     # Converts fMP4 to MPEG-TS to fix timestamp issues, matching EasyProxy Legacy Mode
-    if "video" in mimetype or "audio" in mimetype:
+    # Note: Only remux video, audio passthrough is fine for most players
+    if "video" in mimetype:
         remuxed_content = await remux_to_ts(decrypted_content)
         if remuxed_content:
              return Response(content=remuxed_content, media_type="video/MP2T", headers=apply_header_manipulation({}, proxy_headers))
