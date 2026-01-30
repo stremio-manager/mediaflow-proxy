@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 
 # Global state to persist between extractor instances
 _GLOBAL_SESSION: Optional[ClientSession] = None
+_GLOBAL_PROXY_URL: Optional[str] = None
 _SESSION_LOCK = asyncio.Lock()
 _IFRAME_HOSTS = []
 _STREAM_DATA_CACHE = {}
@@ -57,34 +58,26 @@ class DLHDExtractor(BaseExtractor):
         self.mediaflow_endpoint = "hls_manifest_proxy"
         self._extraction_locks: Dict[str, asyncio.Lock] = {}
 
-    async def _get_session(self) -> ClientSession:
-        global _GLOBAL_SESSION
+    async def _get_session(self) -> tuple[ClientSession, Optional[str]]:
+        global _GLOBAL_SESSION, _GLOBAL_PROXY_URL
         async with _SESSION_LOCK:
             if _GLOBAL_SESSION is None or _GLOBAL_SESSION.closed:
+                from mediaflow_proxy.utils.http_client import get_routing_config, _create_connector
+                
+                # Get default routing for a DLHD-like URL to determine proxy
+                routing_config = get_routing_config()
+                route_match = routing_config.match_url("https://dlhd.dad")
+                
+                connector, _GLOBAL_PROXY_URL = _create_connector(route_match.proxy_url, verify_ssl=False)
+                
                 timeout = ClientTimeout(total=60, connect=30, sock_read=30)
-                
-                # Use mediaflow-proxy settings for proxy if available
-                proxy = settings.proxy_url
-                if proxy:
-                    logger.info(f"🔗 Using proxy {proxy} for DLHD session.")
-                    connector = ProxyConnector.from_url(proxy, ssl=False)
-                else:
-                    connector = TCPConnector(
-                        limit=0,
-                        limit_per_host=0,
-                        keepalive_timeout=30,
-                        enable_cleanup_closed=True,
-                        force_close=False,
-                        use_dns_cache=True
-                    )
-                
                 _GLOBAL_SESSION = ClientSession(
                     timeout=timeout,
                     connector=connector,
                     headers={"user-agent": self.USER_AGENT},
                     cookie_jar=aiohttp.CookieJar()
                 )
-            return _GLOBAL_SESSION
+            return _GLOBAL_SESSION, _GLOBAL_PROXY_URL
 
     @staticmethod
     def extract_channel_id(url: str) -> Optional[str]:
@@ -152,8 +145,8 @@ class DLHDExtractor(BaseExtractor):
         
         for attempt in range(retries):
             try:
-                session = await self._get_session()
-                async with session.get(url, headers=final_headers, ssl=False, auto_decompress=False) as response:
+                session, proxy_url = await self._get_session()
+                async with session.get(url, headers=final_headers, ssl=False, auto_decompress=False, proxy=proxy_url) as response:
                     response.raise_for_status()
                     content = await self._handle_response_content(response)
                     
@@ -192,8 +185,8 @@ class DLHDExtractor(BaseExtractor):
         url = base64.b64decode(encoded_url).decode('utf-8')
         
         try:
-            session = await self._get_session()
-            async with session.get(url, ssl=False, timeout=ClientTimeout(total=10)) as response:
+            session, proxy_url = await self._get_session()
+            async with session.get(url, ssl=False, timeout=ClientTimeout(total=10), proxy=proxy_url) as response:
                 if response.status == 200:
                     text = await response.text()
                     lines = [line.strip() for line in text.splitlines() if line.strip()]
@@ -329,7 +322,7 @@ class DLHDExtractor(BaseExtractor):
         stream_headers = self._build_stream_headers(iframe_url, channel_key, params['auth_token'], secret_key)
         
         # Add session cookies
-        session = await self._get_session()
+        session, _ = await self._get_session()
         cookies = session.cookie_jar.filter_cookies(stream_url)
         cookie_str = "; ".join([f"{k}={v.value}" for k, v in cookies.items()])
         if cookie_str:

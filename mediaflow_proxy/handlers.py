@@ -754,6 +754,22 @@ async def handle_ffmpeg_segment(
     if filename.endswith(".m3u8"):
         with open(file_path, "r") as f:
             content = f.read()
+
+        # If api_password is provided in the request, append it to all segment links in the m3u8
+        api_password = request.query_params.get("api_password")
+        if api_password:
+            import re
+            # Find lines that don't start with # and append api_password
+            lines = content.splitlines()
+            new_lines = []
+            for line in lines:
+                if line and not line.startswith("#"):
+                    connector = "&" if "?" in line else "?"
+                    new_lines.append(f"{line}{connector}api_password={api_password}")
+                else:
+                    new_lines.append(line)
+            content = "\n".join(new_lines)
+
         return Response(content=content, media_type="application/vnd.apple.mpegurl", headers=headers)
 
     if filename.endswith(".ts"):
